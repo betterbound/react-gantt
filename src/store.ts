@@ -252,9 +252,19 @@ class GanttStore {
   @action handleResizeTableWidth(width: number) {
     const columnsWidthArr = this.columns.filter(column => column.width > 0)
     if (this.columns.length === columnsWidthArr.length) return
+    
+    // デバッグ用：tableWidthの変更を追跡
+    console.log('store - tableWidth changing:', {
+      from: this.tableWidth,
+      to: width,
+      timestamp: new Date().toISOString()
+    })
+
     runInAction(() => {
       this.tableWidth = width
       this.viewWidth = this.width - this.tableWidth
+      // Force update of columnsWidth
+      this.columns = [...this.columns]
     })
   }
 
