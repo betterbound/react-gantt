@@ -6860,20 +6860,11 @@ var DraggableBlockItem = observer(function (_ref2) {
       prefixCls = _useContext.prefixCls,
       onExpand = _useContext.onExpand;
 
-  var prefixClsTableBody = "".concat(prefixCls, "-table-body"); // デバッグ用：storeの変更を追跡
-
-  var storeState = React.useMemo(function () {
-    return {
-      columns: store.columns,
-      rowHeight: store.rowHeight,
-      tableWidth: store.tableWidth,
-      columnsWidth: store.getColumnsWidth
-    };
-  }, [store]);
-  var columns = storeState.columns,
-      rowHeight = storeState.rowHeight,
-      tableWidth = storeState.tableWidth;
-  var columnsWidth = storeState.columnsWidth; // デバッグ用：tableWidthの変更を追跡
+  var prefixClsTableBody = "".concat(prefixCls, "-table-body");
+  var columns = store.columns,
+      rowHeight = store.rowHeight,
+      tableWidth = store.tableWidth;
+  var columnsWidth = store.getColumnsWidth; // デバッグ用：tableWidthの変更を追跡
 
   React.useEffect(function () {
     var _a, _b;
