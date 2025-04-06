@@ -4,7 +4,7 @@ import { observer, useObserver } from 'mobx-react-lite';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { createPortal } from 'react-dom';
-import { observable, action, computed, runInAction, makeAutoObservable, toJS } from 'mobx';
+import { observable, action, computed, runInAction, toJS } from 'mobx';
 import { useSensors, useSensor, PointerSensor, KeyboardSensor, DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
 import { useSortable, sortableKeyboardCoordinates, arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
@@ -4912,8 +4912,9 @@ var GanttStore = /*#__PURE__*/function () {
 
     _classCallCheck(this, GanttStore);
 
-    this.width = 1320;
-    this.height = 418;
+    this.locale = _objectSpread2({}, defaultLocale);
+    this.width = 0;
+    this.height = 0;
     this.viewWidth = 0;
     this.tableWidth = 0;
     this.translateX = 0;
@@ -4931,13 +4932,6 @@ var GanttStore = /*#__PURE__*/function () {
     this.draggingType = null;
     this.gestureKeyPress = false;
     this.clientX = 0;
-
-    this.onUpdate = function () {
-      return Promise.resolve(true);
-    };
-
-    this.isRestDay = isRestDay;
-    this.locale = _objectSpread2({}, defaultLocale);
     this.data = [];
     this.originData = [];
     this.columns = [];
@@ -4952,6 +4946,12 @@ var GanttStore = /*#__PURE__*/function () {
     this.startDateKey = 'startDate';
     this.endDateKey = 'endDate';
     this.autoScrollPos = 0;
+
+    this.onUpdate = function () {
+      return Promise.resolve(true);
+    };
+
+    this.isRestDay = isRestDay;
 
     this.getWidthByDate = function (startDate, endDate) {
       return (endDate.valueOf() - startDate.valueOf()) / _this.pxUnitAmp;
@@ -5044,7 +5044,8 @@ var GanttStore = /*#__PURE__*/function () {
       return _this.selectionIndicatorTop >= baseTop && _this.selectionIndicatorTop <= baseTop + _this.rowHeight;
     };
 
-    makeAutoObservable(this);
+    this.width = 1320;
+    this.height = 418;
     this.viewTypeList = customSights.length ? customSights : getViewTypeList(locale);
     var sightConfig = customSights.length ? customSights[0] : getViewTypeList(locale)[0];
     var translateX = dayjs(this.getStartDate()).valueOf() / (sightConfig.value * 1000);
@@ -5748,6 +5749,36 @@ var GanttStore = /*#__PURE__*/function () {
 
   return GanttStore;
 }();
+
+__decorate([observable], GanttStore.prototype, "width", void 0);
+
+__decorate([observable], GanttStore.prototype, "height", void 0);
+
+__decorate([observable], GanttStore.prototype, "viewWidth", void 0);
+
+__decorate([observable], GanttStore.prototype, "tableWidth", void 0);
+
+__decorate([observable], GanttStore.prototype, "translateX", void 0);
+
+__decorate([observable], GanttStore.prototype, "sightConfig", void 0);
+
+__decorate([observable], GanttStore.prototype, "bodyWidth", void 0);
+
+__decorate([observable], GanttStore.prototype, "rowHeight", void 0);
+
+__decorate([observable], GanttStore.prototype, "disabled", void 0);
+
+__decorate([observable], GanttStore.prototype, "viewTypeList", void 0);
+
+__decorate([observable], GanttStore.prototype, "collapse", void 0);
+
+__decorate([observable], GanttStore.prototype, "showSelectionIndicator", void 0);
+
+__decorate([observable], GanttStore.prototype, "draggingType", void 0);
+
+__decorate([observable], GanttStore.prototype, "gestureKeyPress", void 0);
+
+__decorate([observable], GanttStore.prototype, "clientX", void 0);
 
 __decorate([observable], GanttStore.prototype, "data", void 0);
 
