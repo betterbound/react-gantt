@@ -60,17 +60,8 @@ const DraggableBlockItem = observer(({
 }: DraggableBlockItemProps) => {
   const { store, onRow, tableIndent, expandIcon, prefixCls, onExpand } = useContext(Context)
   const prefixClsTableBody = `${prefixCls}-table-body`
-  
-  // デバッグ用：storeの変更を追跡
-  const storeState = React.useMemo(() => ({
-    columns: store.columns,
-    rowHeight: store.rowHeight,
-    tableWidth: store.tableWidth,
-    columnsWidth: store.getColumnsWidth,
-  }), [store])
-
-  const { columns, rowHeight, tableWidth } = storeState
-  const columnsWidth = storeState.columnsWidth
+  const { columns, rowHeight, tableWidth } = store
+  const columnsWidth = store.getColumnsWidth
 
   // デバッグ用：tableWidthの変更を追跡
   React.useEffect(() => {
