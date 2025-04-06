@@ -6849,13 +6849,15 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
 
   var prefixClsTableBody = "".concat(prefixCls, "-table-body");
   var columns = store.columns,
-      rowHeight = store.rowHeight;
+      rowHeight = store.rowHeight,
+      tableWidth = store.tableWidth;
   var columnsWidth = store.getColumnsWidth;
   var style = {
     opacity: isActive ? 0.5 : 1,
     boxShadow: isActive ? '0 4px 8px rgba(0, 0, 0, 0.1)' : undefined,
     transform: transform ? "translate3d(".concat(transform.x, "px, ").concat(transform.y, "px, 0)") : undefined,
-    transition: transition
+    transition: transition,
+    width: tableWidth
   };
   if (!(bar === null || bar === void 0 ? void 0 : bar.record)) return null;
   return /*#__PURE__*/React.createElement("div", {
