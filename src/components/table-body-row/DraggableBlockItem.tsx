@@ -60,14 +60,14 @@ const DraggableBlockItem = ({
 }: DraggableBlockItemProps) => {
   const { store, onRow, tableIndent, expandIcon, prefixCls, onExpand } = useContext(Context)
   const prefixClsTableBody = `${prefixCls}-table-body`
-  const { columns, rowHeight } = store
+  const { columns, rowHeight, tableWidth } = store
   const columnsWidth = store.getColumnsWidth
-
   const style = {
     opacity: isActive ? 0.5 : 1,
     boxShadow: isActive ? '0 4px 8px rgba(0, 0, 0, 0.1)' : undefined,
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     transition,
+    width: tableWidth,
   }
 
   if (!bar?.record) return null
