@@ -4,7 +4,7 @@ import { observer, useObserver } from 'mobx-react-lite';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { createPortal } from 'react-dom';
-import { observable, action, computed, runInAction, toJS } from 'mobx';
+import { observable, action, computed, runInAction, makeAutoObservable, toJS } from 'mobx';
 import { useSensors, useSensor, PointerSensor, KeyboardSensor, DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
 import { useSortable, sortableKeyboardCoordinates, arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
@@ -4912,27 +4912,24 @@ var GanttStore = /*#__PURE__*/function () {
 
     _classCallCheck(this, GanttStore);
 
-    this.locale = _objectSpread2({}, defaultLocale);
-    this.data = [];
-    this.originData = [];
-    this.columns = [];
-    this.dependencies = [];
-    this.scrolling = false;
-    this.scrollTop = 0;
+    this.width = 1320;
+    this.height = 418;
+    this.viewWidth = 0;
+    this.tableWidth = 0;
+    this.translateX = 0;
+    this.sightConfig = {
+      type: 'day',
+      label: '日',
+      value: Gantt.ESightValues.day
+    };
+    this.bodyWidth = 0;
+    this.rowHeight = 0;
+    this.disabled = false;
+    this.viewTypeList = [];
     this.collapse = false;
     this.showSelectionIndicator = false;
-    this.selectionIndicatorTop = 0;
-    this.dragging = null;
     this.draggingType = null;
-    this.disabled = false;
-    this.viewTypeList = getViewTypeList(this.locale);
     this.gestureKeyPress = false;
-    this.mainElementRef = /*#__PURE__*/createRef();
-    this.chartElementRef = /*#__PURE__*/createRef();
-    this.isPointerPress = false;
-    this.startDateKey = 'startDate';
-    this.endDateKey = 'endDate';
-    this.autoScrollPos = 0;
     this.clientX = 0;
 
     this.onUpdate = function () {
@@ -4940,6 +4937,21 @@ var GanttStore = /*#__PURE__*/function () {
     };
 
     this.isRestDay = isRestDay;
+    this.locale = _objectSpread2({}, defaultLocale);
+    this.data = [];
+    this.originData = [];
+    this.columns = [];
+    this.dependencies = [];
+    this.scrolling = false;
+    this.scrollTop = 0;
+    this.selectionIndicatorTop = 0;
+    this.dragging = null;
+    this.mainElementRef = /*#__PURE__*/createRef();
+    this.chartElementRef = /*#__PURE__*/createRef();
+    this.isPointerPress = false;
+    this.startDateKey = 'startDate';
+    this.endDateKey = 'endDate';
+    this.autoScrollPos = 0;
 
     this.getWidthByDate = function (startDate, endDate) {
       return (endDate.valueOf() - startDate.valueOf()) / _this.pxUnitAmp;
@@ -5032,8 +5044,7 @@ var GanttStore = /*#__PURE__*/function () {
       return _this.selectionIndicatorTop >= baseTop && _this.selectionIndicatorTop <= baseTop + _this.rowHeight;
     };
 
-    this.width = 1320;
-    this.height = 418;
+    makeAutoObservable(this);
     this.viewTypeList = customSights.length ? customSights : getViewTypeList(locale);
     var sightConfig = customSights.length ? customSights[0] : getViewTypeList(locale)[0];
     var translateX = dayjs(this.getStartDate()).valueOf() / (sightConfig.value * 1000);
@@ -5750,31 +5761,9 @@ __decorate([observable], GanttStore.prototype, "scrolling", void 0);
 
 __decorate([observable], GanttStore.prototype, "scrollTop", void 0);
 
-__decorate([observable], GanttStore.prototype, "collapse", void 0);
-
-__decorate([observable], GanttStore.prototype, "tableWidth", void 0);
-
-__decorate([observable], GanttStore.prototype, "viewWidth", void 0);
-
-__decorate([observable], GanttStore.prototype, "width", void 0);
-
-__decorate([observable], GanttStore.prototype, "height", void 0);
-
-__decorate([observable], GanttStore.prototype, "bodyWidth", void 0);
-
-__decorate([observable], GanttStore.prototype, "translateX", void 0);
-
-__decorate([observable], GanttStore.prototype, "sightConfig", void 0);
-
-__decorate([observable], GanttStore.prototype, "showSelectionIndicator", void 0);
-
 __decorate([observable], GanttStore.prototype, "selectionIndicatorTop", void 0);
 
 __decorate([observable], GanttStore.prototype, "dragging", void 0);
-
-__decorate([observable], GanttStore.prototype, "draggingType", void 0);
-
-__decorate([observable], GanttStore.prototype, "disabled", void 0);
 
 __decorate([action], GanttStore.prototype, "setData", null);
 
@@ -6818,7 +6807,7 @@ var RowToggler = function RowToggler(_ref) {
   })))));
 };
 
-var ExpandIcon = function ExpandIcon(_ref) {
+var ExpandIcon = observer(function (_ref) {
   var bar = _ref.bar,
       onExpand = _ref.onExpand,
       store = _ref.store,
@@ -6841,9 +6830,8 @@ var ExpandIcon = function ExpandIcon(_ref) {
     collapsed: bar._collapsed,
     onClick: handleClick
   }));
-};
-
-var DraggableBlockItem = function DraggableBlockItem(_ref2) {
+});
+var DraggableBlockItem = observer(function (_ref2) {
   var bar = _ref2.bar,
       isActive = _ref2.isActive,
       listeners = _ref2.listeners,
@@ -6935,7 +6923,7 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
       barList: bar.children
     }));
   });
-};
+});
 
 var ObserverTableRow = function ObserverTableRow(_ref) {
   var bar = _ref.bar,
