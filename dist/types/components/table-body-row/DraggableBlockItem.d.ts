@@ -1,5 +1,5 @@
+/// <reference types="react" />
 import type { DraggableSyntheticListeners } from '@dnd-kit/core';
-import React from 'react';
 import type { Gantt } from '../../types';
 interface DraggableBlockItemProps {
     bar: Gantt.Bar;
@@ -12,5 +12,5 @@ interface DraggableBlockItemProps {
     transition?: string;
     setActivatorNodeRef?: (element: HTMLElement | null) => void;
 }
-declare const DraggableBlockItem: React.FunctionComponent<DraggableBlockItemProps>;
+declare const DraggableBlockItem: ({ bar, isActive, listeners, transform, transition, setActivatorNodeRef, }: DraggableBlockItemProps) => JSX.Element;
 export default DraggableBlockItem;

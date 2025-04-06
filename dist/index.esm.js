@@ -1,6 +1,6 @@
 import { usePersistFn, useClickAway, useSize } from 'ahooks';
 import React, { createContext, useContext, useState, useMemo, useRef, useCallback, createRef, memo, useEffect, Children, isValidElement, cloneElement, useImperativeHandle } from 'react';
-import { observer } from 'mobx-react-lite';
+import { observer, useObserver } from 'mobx-react-lite';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { createPortal } from 'react-dom';
@@ -6818,7 +6818,7 @@ var RowToggler = function RowToggler(_ref) {
   })))));
 };
 
-var ExpandIcon = observer(function (_ref) {
+var ExpandIcon = function ExpandIcon(_ref) {
   var bar = _ref.bar,
       onExpand = _ref.onExpand,
       store = _ref.store,
@@ -6841,16 +6841,15 @@ var ExpandIcon = observer(function (_ref) {
     collapsed: bar._collapsed,
     onClick: handleClick
   }));
-});
-var DraggableBlockItem = observer(function (_ref2) {
+};
+
+var DraggableBlockItem = function DraggableBlockItem(_ref2) {
   var bar = _ref2.bar,
       isActive = _ref2.isActive,
       listeners = _ref2.listeners,
       transform = _ref2.transform,
       transition = _ref2.transition,
       setActivatorNodeRef = _ref2.setActivatorNodeRef;
-
-  var _a, _b;
 
   var _useContext = useContext(context),
       store = _useContext.store,
@@ -6861,78 +6860,82 @@ var DraggableBlockItem = observer(function (_ref2) {
       onExpand = _useContext.onExpand;
 
   var prefixClsTableBody = "".concat(prefixCls, "-table-body");
-  var columns = store.columns,
-      rowHeight = store.rowHeight,
-      tableWidth = store.tableWidth;
-  var columnsWidth = store.getColumnsWidth; // デバッグ用：tableWidthの変更を追跡
-
-  React.useEffect(function () {
+  return useObserver(function () {
     var _a, _b;
 
-    console.log('DraggableBlockItem - tableWidth changed:', {
-      tableWidth: tableWidth,
-      timestamp: new Date().toISOString(),
-      barId: (_b = (_a = bar === null || bar === void 0 ? void 0 : bar.task) === null || _a === void 0 ? void 0 : _a.record) === null || _b === void 0 ? void 0 : _b.id
-    });
-  }, [tableWidth, (_b = (_a = bar === null || bar === void 0 ? void 0 : bar.task) === null || _a === void 0 ? void 0 : _a.record) === null || _b === void 0 ? void 0 : _b.id]); // デバッグ用：コンポーネントの再レンダリングを追跡
+    var columns = store.columns,
+        rowHeight = store.rowHeight,
+        tableWidth = store.tableWidth;
+    var columnsWidth = store.getColumnsWidth; // デバッグ用：tableWidthの変更を追跡
 
-  React.useEffect(function () {
-    var _a, _b;
+    React.useEffect(function () {
+      var _a, _b;
 
-    console.log('DraggableBlockItem - component rendered:', {
-      timestamp: new Date().toISOString(),
-      barId: (_b = (_a = bar === null || bar === void 0 ? void 0 : bar.task) === null || _a === void 0 ? void 0 : _a.record) === null || _b === void 0 ? void 0 : _b.id
+      console.log('DraggableBlockItem - tableWidth changed:', {
+        tableWidth: tableWidth,
+        timestamp: new Date().toISOString(),
+        barId: (_b = (_a = bar === null || bar === void 0 ? void 0 : bar.task) === null || _a === void 0 ? void 0 : _a.record) === null || _b === void 0 ? void 0 : _b.id
+      });
+    }, [tableWidth, (_b = (_a = bar === null || bar === void 0 ? void 0 : bar.task) === null || _a === void 0 ? void 0 : _a.record) === null || _b === void 0 ? void 0 : _b.id]); // デバッグ用：コンポーネントの再レンダリングを追跡
+
+    React.useEffect(function () {
+      var _a, _b;
+
+      console.log('DraggableBlockItem - component rendered:', {
+        timestamp: new Date().toISOString(),
+        barId: (_b = (_a = bar === null || bar === void 0 ? void 0 : bar.task) === null || _a === void 0 ? void 0 : _a.record) === null || _b === void 0 ? void 0 : _b.id
+      });
     });
-  });
-  var style = {
-    opacity: isActive ? 0.5 : 1,
-    boxShadow: isActive ? '0 4px 8px rgba(0, 0, 0, 0.1)' : undefined,
-    transform: transform ? "translate3d(".concat(transform.x, "px, ").concat(transform.y, "px, 0)") : undefined,
-    transition: transition
-  };
-  if (!(bar === null || bar === void 0 ? void 0 : bar.record)) return null;
-  return /*#__PURE__*/React.createElement("div", {
-    ref: setActivatorNodeRef,
-    style: style
-  }, /*#__PURE__*/React.createElement("div", {
-    role: 'none',
-    className: classNames("".concat(prefixClsTableBody, "-row"), bar.record.className),
-    onClick: function onClick() {
-      onRow === null || onRow === void 0 ? void 0 : onRow.onClick(bar.record);
-    }
-  }, columns.map(function (column, index) {
+    var style = {
+      opacity: isActive ? 0.5 : 1,
+      boxShadow: isActive ? '0 4px 8px rgba(0, 0, 0, 0.1)' : undefined,
+      transform: transform ? "translate3d(".concat(transform.x, "px, ").concat(transform.y, "px, 0)") : undefined,
+      transition: transition
+    };
+    if (!(bar === null || bar === void 0 ? void 0 : bar.record)) return null;
     return /*#__PURE__*/React.createElement("div", {
-      key: column.name,
-      className: "".concat(prefixClsTableBody, "-cell"),
-      style: _objectSpread2({
-        width: columnsWidth[index],
-        height: rowHeight,
-        minWidth: column.minWidth,
-        maxWidth: column.maxWidth,
-        textAlign: column.align ? column.align : 'left',
-        paddingLeft: index === 0 && tableIndent * (bar._depth + 1) + 10
-      }, column.style)
-    }, column.name === 'dragButton' && column.render && column.render(bar.record) != null && /*#__PURE__*/React.createElement("button", _objectSpread2(_objectSpread2({
-      type: 'button'
-    }, listeners), {}, {
-      style: {
-        cursor: isActive ? 'grabbing' : 'grab',
-        pointerEvents: 'auto',
-        touchAction: 'none'
+      ref: setActivatorNodeRef,
+      style: style
+    }, /*#__PURE__*/React.createElement("div", {
+      role: 'none',
+      className: classNames("".concat(prefixClsTableBody, "-row"), bar.record.className),
+      onClick: function onClick() {
+        onRow === null || onRow === void 0 ? void 0 : onRow.onClick(bar.record);
       }
-    }), column.render(bar.record)), index === 0 && bar._childrenCount > 0 && /*#__PURE__*/React.createElement(ExpandIcon, {
-      bar: bar,
-      onExpand: onExpand,
-      store: store,
-      expandIcon: expandIcon,
-      prefixCls: prefixCls
-    }), column.name !== 'dragButton' && /*#__PURE__*/React.createElement("span", {
-      className: "".concat(prefixClsTableBody, "-ellipsis")
-    }, column.render ? column.render(bar.record) : bar.record[column.name]));
-  })), !bar._collapsed && bar.children && bar.children.length > 0 && /*#__PURE__*/React.createElement(ObserverTableRows$1, {
-    barList: bar.children
-  }));
-});
+    }, columns.map(function (column, index) {
+      return /*#__PURE__*/React.createElement("div", {
+        key: column.name,
+        className: "".concat(prefixClsTableBody, "-cell"),
+        style: _objectSpread2({
+          width: columnsWidth[index],
+          height: rowHeight,
+          minWidth: column.minWidth,
+          maxWidth: column.maxWidth,
+          textAlign: column.align ? column.align : 'left',
+          paddingLeft: index === 0 && tableIndent * (bar._depth + 1) + 10
+        }, column.style)
+      }, column.name === 'dragButton' && column.render && column.render(bar.record) != null && /*#__PURE__*/React.createElement("button", _objectSpread2(_objectSpread2({
+        type: 'button'
+      }, listeners), {}, {
+        style: {
+          cursor: isActive ? 'grabbing' : 'grab',
+          pointerEvents: 'auto',
+          touchAction: 'none'
+        }
+      }), column.render(bar.record)), index === 0 && bar._childrenCount > 0 && /*#__PURE__*/React.createElement(ExpandIcon, {
+        bar: bar,
+        onExpand: onExpand,
+        store: store,
+        expandIcon: expandIcon,
+        prefixCls: prefixCls
+      }), column.name !== 'dragButton' && /*#__PURE__*/React.createElement("span", {
+        className: "".concat(prefixClsTableBody, "-ellipsis")
+      }, column.render ? column.render(bar.record) : bar.record[column.name]));
+    })), !bar._collapsed && bar.children && bar.children.length > 0 && /*#__PURE__*/React.createElement(ObserverTableRows$1, {
+      barList: bar.children
+    }));
+  });
+};
 
 var ObserverTableRow = function ObserverTableRow(_ref) {
   var bar = _ref.bar,
