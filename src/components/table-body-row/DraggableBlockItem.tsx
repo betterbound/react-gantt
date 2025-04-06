@@ -1,6 +1,6 @@
 import type { DraggableSyntheticListeners } from '@dnd-kit/core'
 import classNames from 'classnames'
-import { useObserver } from 'mobx-react-lite'
+import { observer, useObserver } from 'mobx-react-lite'
 import React, { useContext } from 'react'
 import Context from '../../context'
 import type GanttStore from '../../store'
@@ -28,7 +28,7 @@ interface DraggableBlockItemProps {
   setActivatorNodeRef?: (element: HTMLElement | null) => void
 }
 
-const ExpandIcon = ({ bar, onExpand, store, expandIcon, prefixCls }: ExpandIconProps) => {
+const ExpandIcon = observer(({ bar, onExpand, store, expandIcon, prefixCls }: ExpandIconProps) => {
   const handleClick = event => {
     event.stopPropagation()
     if (onExpand) onExpand(bar.task.record, !bar._collapsed)
@@ -48,9 +48,9 @@ const ExpandIcon = ({ bar, onExpand, store, expandIcon, prefixCls }: ExpandIconP
       )}
     </div>
   )
-}
+})
 
-const DraggableBlockItem = ({
+const DraggableBlockItem = observer(({
   bar,
   isActive,
   listeners,
@@ -142,6 +142,6 @@ const DraggableBlockItem = ({
       </div>
     )
   })
-}
+})
 
 export default DraggableBlockItem

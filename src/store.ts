@@ -9,7 +9,7 @@ import weekOfYear from 'dayjs/plugin/weekOfYear'
 import debounce from 'lodash/debounce'
 import find from 'lodash/find'
 import throttle from 'lodash/throttle'
-import { action, computed, observable, runInAction, toJS } from 'mobx'
+import { action, computed, makeAutoObservable, observable, runInAction, toJS } from 'mobx'
 import type React from 'react'
 import { createRef } from 'react'
 import { HEADER_HEIGHT, TOP_PADDING } from './constants'
@@ -66,6 +66,24 @@ function isRestDay(date: string) {
 }
 
 class GanttStore {
+  width = 1320
+  height = 418
+  viewWidth = 0
+  tableWidth = 0
+  translateX = 0
+  sightConfig: Gantt.SightConfig = { type: 'day', label: '日', value: Gantt.ESightValues.day }
+  bodyWidth = 0
+  rowHeight = 0
+  disabled = false
+  viewTypeList: Gantt.SightConfig[] = []
+  collapse = false
+  showSelectionIndicator = false
+  draggingType: Gantt.MoveType | null = null
+  gestureKeyPress = false
+  clientX = 0
+  onUpdate: GanttProperties['onUpdate'] = () => Promise.resolve(true)
+  isRestDay = isRestDay
+
   constructor({
     rowHeight,
     disabled = false,
@@ -79,8 +97,7 @@ class GanttStore {
     locale: GanttLocale
     tableSize: { minWidth?: number; maxWidth?: number }
   }) {
-    this.width = 1320
-    this.height = 418
+    makeAutoObservable(this)
     this.viewTypeList = customSights.length ? customSights : getViewTypeList(locale)
     const sightConfig = customSights.length ? customSights[0] : getViewTypeList(locale)[0]
     const translateX = dayjs(this.getStartDate()).valueOf() / (sightConfig.value * 1000)
@@ -115,35 +132,9 @@ class GanttStore {
 
   @observable scrollTop = 0
 
-  @observable collapse = false
-
-  @observable tableWidth: number
-
-  @observable viewWidth: number
-
-  @observable width: number
-
-  @observable height: number
-
-  @observable bodyWidth: number
-
-  @observable translateX: number
-
-  @observable sightConfig: Gantt.SightConfig
-
-  @observable showSelectionIndicator = false
-
   @observable selectionIndicatorTop = 0
 
   @observable dragging: Gantt.Bar | null = null
-
-  @observable draggingType: Gantt.MoveType | null = null
-
-  @observable disabled = false
-
-  viewTypeList = getViewTypeList(this.locale)
-
-  gestureKeyPress = false
 
   mainElementRef = createRef<HTMLDivElement>()
 
@@ -156,14 +147,6 @@ class GanttStore {
   endDateKey = 'endDate'
 
   autoScrollPos = 0
-
-  clientX = 0
-
-  rowHeight: number
-
-  onUpdate: GanttProperties['onUpdate'] = () => Promise.resolve(true)
-
-  isRestDay = isRestDay
 
   getStartDate() {
     return dayjs().subtract(10, 'day').toString()
