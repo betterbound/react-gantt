@@ -50,7 +50,7 @@ const ExpandIcon = observer(({ bar, onExpand, store, expandIcon, prefixCls }: Ex
   )
 })
 
-const DraggableBlockItem = ({
+const DraggableBlockItem = observer(({
   bar,
   isActive,
   listeners,
@@ -62,12 +62,29 @@ const DraggableBlockItem = ({
   const prefixClsTableBody = `${prefixCls}-table-body`
   const { columns, rowHeight, tableWidth } = store
   const columnsWidth = store.getColumnsWidth
+
+  // デバッグ用：tableWidthの変更を追跡
+  React.useEffect(() => {
+    console.log('DraggableBlockItem - tableWidth changed:', {
+      tableWidth,
+      timestamp: new Date().toISOString(),
+      barId: bar?.task?.record?.id,
+    })
+  }, [tableWidth, bar?.task?.record?.id])
+
+  // デバッグ用：コンポーネントの再レンダリングを追跡
+  React.useEffect(() => {
+    console.log('DraggableBlockItem - component rendered:', {
+      timestamp: new Date().toISOString(),
+      barId: bar?.task?.record?.id,
+    })
+  })
+
   const style = {
     opacity: isActive ? 0.5 : 1,
     boxShadow: isActive ? '0 4px 8px rgba(0, 0, 0, 0.1)' : undefined,
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
     transition,
-    width: tableWidth,
   }
 
   if (!bar?.record) return null
@@ -126,6 +143,6 @@ const DraggableBlockItem = ({
       {!bar._collapsed && bar.children && bar.children.length > 0 && <ObserverTableRows barList={bar.children} />}
     </div>
   )
-}
+})
 
-export default observer(DraggableBlockItem)
+export default DraggableBlockItem

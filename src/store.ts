@@ -252,8 +252,10 @@ class GanttStore {
   @action handleResizeTableWidth(width: number) {
     const columnsWidthArr = this.columns.filter(column => column.width > 0)
     if (this.columns.length === columnsWidthArr.length) return
-    this.tableWidth = width
-    this.viewWidth = this.width - this.tableWidth
+    runInAction(() => {
+      this.tableWidth = width
+      this.viewWidth = this.width - this.tableWidth
+    })
   }
 
   @action initWidth() {
