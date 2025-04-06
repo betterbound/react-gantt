@@ -5142,12 +5142,16 @@ var GanttStore = /*#__PURE__*/function () {
   }, {
     key: "handleResizeTableWidth",
     value: function handleResizeTableWidth(width) {
+      var _this2 = this;
+
       var columnsWidthArr = this.columns.filter(function (column) {
         return column.width > 0;
       });
       if (this.columns.length === columnsWidthArr.length) return;
-      this.tableWidth = width;
-      this.viewWidth = this.width - this.tableWidth;
+      runInAction(function () {
+        _this2.tableWidth = width;
+        _this2.viewWidth = _this2.width - _this2.tableWidth;
+      });
     }
   }, {
     key: "initWidth",
@@ -5350,7 +5354,7 @@ var GanttStore = /*#__PURE__*/function () {
   }, {
     key: "getMinorList",
     value: function getMinorList() {
-      var _this2 = this;
+      var _this3 = this;
 
       var minorFormatMap = {
         day: this.locale.minorFormat.day,
@@ -5386,7 +5390,7 @@ var GanttStore = /*#__PURE__*/function () {
             return start.add(6, 'month');
           }
         };
-        return map[_this2.sightConfig.type]();
+        return map[_this3.sightConfig.type]();
       };
 
       var setStart = function setStart(date) {
@@ -5411,7 +5415,7 @@ var GanttStore = /*#__PURE__*/function () {
             return date.month(6).startOf('month');
           }
         };
-        return map[_this2.sightConfig.type]();
+        return map[_this3.sightConfig.type]();
       };
 
       var setEnd = function setEnd(start) {
@@ -5436,13 +5440,13 @@ var GanttStore = /*#__PURE__*/function () {
             return start.month(11).endOf('month');
           }
         };
-        return map[_this2.sightConfig.type]();
+        return map[_this3.sightConfig.type]();
       };
 
       var getMinorKey = function getMinorKey(date) {
-        if (_this2.sightConfig.type === 'halfYear') return date.format(format) + (fstHalfYear.has(date.month()) ? _this2.locale.firstHalf : _this2.locale.secondHalf);
+        if (_this3.sightConfig.type === 'halfYear') return date.format(format) + (fstHalfYear.has(date.month()) ? _this3.locale.firstHalf : _this3.locale.secondHalf);
 
-        if (_this2.sightConfig.type === 'week_in_month') {
+        if (_this3.sightConfig.type === 'week_in_month') {
           // その月の最初の日を取得。
           var startOfMonth = dayjs(date).startOf('month'); // その月の最初の月曜日を取得。Dayjsのday()メソッドは、日曜日を0として曜日の番号を返すため、1以下ならその日は月曜日または日曜日。
           // もしその日が月曜日（1）または日曜日（0）であれば、その日が最初の月曜日（日曜日の場合、その次の日が月曜日なので問題ない）。
@@ -5479,7 +5483,7 @@ var GanttStore = /*#__PURE__*/function () {
   }, {
     key: "minorAmp2Px",
     value: function minorAmp2Px(ampList) {
-      var _this3 = this;
+      var _this4 = this;
 
       var pxUnitAmp = this.pxUnitAmp;
       return ampList.map(function (item) {
@@ -5489,7 +5493,7 @@ var GanttStore = /*#__PURE__*/function () {
         var left = startDate.valueOf() / pxUnitAmp;
         var width = (endDate.valueOf() - startDate.valueOf()) / pxUnitAmp;
         var isWeek = false;
-        if (_this3.sightConfig.type === 'day') isWeek = _this3.isRestDay(startDate.toString());
+        if (_this4.sightConfig.type === 'day') isWeek = _this4.isRestDay(startDate.toString());
         return {
           label: label,
           left: left,
@@ -6830,14 +6834,15 @@ var ExpandIcon = observer(function (_ref) {
     onClick: handleClick
   }));
 });
-
-var DraggableBlockItem = function DraggableBlockItem(_ref2) {
+var DraggableBlockItem = observer(function (_ref2) {
   var bar = _ref2.bar,
       isActive = _ref2.isActive,
       listeners = _ref2.listeners,
       transform = _ref2.transform,
       transition = _ref2.transition,
       setActivatorNodeRef = _ref2.setActivatorNodeRef;
+
+  var _a, _b;
 
   var _useContext = useContext(context),
       store = _useContext.store,
@@ -6851,13 +6856,31 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
   var columns = store.columns,
       rowHeight = store.rowHeight,
       tableWidth = store.tableWidth;
-  var columnsWidth = store.getColumnsWidth;
+  var columnsWidth = store.getColumnsWidth; // デバッグ用：tableWidthの変更を追跡
+
+  React.useEffect(function () {
+    var _a, _b;
+
+    console.log('DraggableBlockItem - tableWidth changed:', {
+      tableWidth: tableWidth,
+      timestamp: new Date().toISOString(),
+      barId: (_b = (_a = bar === null || bar === void 0 ? void 0 : bar.task) === null || _a === void 0 ? void 0 : _a.record) === null || _b === void 0 ? void 0 : _b.id
+    });
+  }, [tableWidth, (_b = (_a = bar === null || bar === void 0 ? void 0 : bar.task) === null || _a === void 0 ? void 0 : _a.record) === null || _b === void 0 ? void 0 : _b.id]); // デバッグ用：コンポーネントの再レンダリングを追跡
+
+  React.useEffect(function () {
+    var _a, _b;
+
+    console.log('DraggableBlockItem - component rendered:', {
+      timestamp: new Date().toISOString(),
+      barId: (_b = (_a = bar === null || bar === void 0 ? void 0 : bar.task) === null || _a === void 0 ? void 0 : _a.record) === null || _b === void 0 ? void 0 : _b.id
+    });
+  });
   var style = {
     opacity: isActive ? 0.5 : 1,
     boxShadow: isActive ? '0 4px 8px rgba(0, 0, 0, 0.1)' : undefined,
     transform: transform ? "translate3d(".concat(transform.x, "px, ").concat(transform.y, "px, 0)") : undefined,
-    transition: transition,
-    width: tableWidth
+    transition: transition
   };
   if (!(bar === null || bar === void 0 ? void 0 : bar.record)) return null;
   return /*#__PURE__*/React.createElement("div", {
@@ -6901,9 +6924,7 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
   })), !bar._collapsed && bar.children && bar.children.length > 0 && /*#__PURE__*/React.createElement(ObserverTableRows$1, {
     barList: bar.children
   }));
-};
-
-var DraggableBlockItem$1 = observer(DraggableBlockItem);
+});
 
 var ObserverTableRow = function ObserverTableRow(_ref) {
   var bar = _ref.bar,
@@ -6911,7 +6932,7 @@ var ObserverTableRow = function ObserverTableRow(_ref) {
       isActive = _ref$isActive === void 0 ? false : _ref$isActive;
   return /*#__PURE__*/React.createElement(DraggableBlock$1, {
     id: bar.record.id
-  }, /*#__PURE__*/React.createElement(DraggableBlockItem$1, {
+  }, /*#__PURE__*/React.createElement(DraggableBlockItem, {
     bar: bar,
     isActive: isActive
   }));

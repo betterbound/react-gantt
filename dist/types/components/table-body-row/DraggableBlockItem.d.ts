@@ -12,5 +12,5 @@ interface DraggableBlockItemProps {
     transition?: string;
     setActivatorNodeRef?: (element: HTMLElement | null) => void;
 }
-declare const _default: React.FunctionComponent<DraggableBlockItemProps>;
-export default _default;
+declare const DraggableBlockItem: React.FunctionComponent<DraggableBlockItemProps>;
+export default DraggableBlockItem;
