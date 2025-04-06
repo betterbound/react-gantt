@@ -5147,10 +5147,18 @@ var GanttStore = /*#__PURE__*/function () {
       var columnsWidthArr = this.columns.filter(function (column) {
         return column.width > 0;
       });
-      if (this.columns.length === columnsWidthArr.length) return;
+      if (this.columns.length === columnsWidthArr.length) return; // デバッグ用：tableWidthの変更を追跡
+
+      console.log('store - tableWidth changing:', {
+        from: this.tableWidth,
+        to: width,
+        timestamp: new Date().toISOString()
+      });
       runInAction(function () {
         _this2.tableWidth = width;
-        _this2.viewWidth = _this2.width - _this2.tableWidth;
+        _this2.viewWidth = _this2.width - _this2.tableWidth; // Force update of columnsWidth
+
+        _this2.columns = _toConsumableArray(_this2.columns);
       });
     }
   }, {
@@ -6852,11 +6860,20 @@ var DraggableBlockItem = observer(function (_ref2) {
       prefixCls = _useContext.prefixCls,
       onExpand = _useContext.onExpand;
 
-  var prefixClsTableBody = "".concat(prefixCls, "-table-body");
-  var columns = store.columns,
-      rowHeight = store.rowHeight,
-      tableWidth = store.tableWidth;
-  var columnsWidth = store.getColumnsWidth; // デバッグ用：tableWidthの変更を追跡
+  var prefixClsTableBody = "".concat(prefixCls, "-table-body"); // デバッグ用：storeの変更を追跡
+
+  var storeState = React.useMemo(function () {
+    return {
+      columns: store.columns,
+      rowHeight: store.rowHeight,
+      tableWidth: store.tableWidth,
+      columnsWidth: store.getColumnsWidth
+    };
+  }, [store]);
+  var columns = storeState.columns,
+      rowHeight = storeState.rowHeight,
+      tableWidth = storeState.tableWidth;
+  var columnsWidth = storeState.columnsWidth; // デバッグ用：tableWidthの変更を追跡
 
   React.useEffect(function () {
     var _a, _b;
