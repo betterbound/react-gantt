@@ -1,6 +1,6 @@
 import type { DraggableSyntheticListeners } from '@dnd-kit/core'
 import classNames from 'classnames'
-import { observer } from 'mobx-react-lite'
+import { useObserver } from 'mobx-react-lite'
 import React, { useContext } from 'react'
 import Context from '../../context'
 import type GanttStore from '../../store'
@@ -28,7 +28,7 @@ interface DraggableBlockItemProps {
   setActivatorNodeRef?: (element: HTMLElement | null) => void
 }
 
-const ExpandIcon = observer(({ bar, onExpand, store, expandIcon, prefixCls }: ExpandIconProps) => {
+const ExpandIcon = ({ bar, onExpand, store, expandIcon, prefixCls }: ExpandIconProps) => {
   const handleClick = event => {
     event.stopPropagation()
     if (onExpand) onExpand(bar.task.record, !bar._collapsed)
@@ -48,9 +48,9 @@ const ExpandIcon = observer(({ bar, onExpand, store, expandIcon, prefixCls }: Ex
       )}
     </div>
   )
-})
+}
 
-const DraggableBlockItem = observer(({
+const DraggableBlockItem = ({
   bar,
   isActive,
   listeners,
@@ -60,89 +60,88 @@ const DraggableBlockItem = observer(({
 }: DraggableBlockItemProps) => {
   const { store, onRow, tableIndent, expandIcon, prefixCls, onExpand } = useContext(Context)
   const prefixClsTableBody = `${prefixCls}-table-body`
-  const { columns, rowHeight, tableWidth } = store
-  const columnsWidth = store.getColumnsWidth
 
-  // デバッグ用：tableWidthの変更を追跡
-  React.useEffect(() => {
-    console.log('DraggableBlockItem - tableWidth changed:', {
-      tableWidth,
-      timestamp: new Date().toISOString(),
-      barId: bar?.task?.record?.id,
+  return useObserver(() => {
+    const { columns, rowHeight, tableWidth } = store
+    const columnsWidth = store.getColumnsWidth
+
+    // デバッグ用：tableWidthの変更を追跡
+    React.useEffect(() => {
+      console.log('DraggableBlockItem - tableWidth changed:', {
+        tableWidth,
+        timestamp: new Date().toISOString(),
+        barId: bar?.task?.record?.id,
+      })
+    }, [tableWidth, bar?.task?.record?.id])
+
+    // デバッグ用：コンポーネントの再レンダリングを追跡
+    React.useEffect(() => {
+      console.log('DraggableBlockItem - component rendered:', {
+        timestamp: new Date().toISOString(),
+        barId: bar?.task?.record?.id,
+      })
     })
-  }, [tableWidth, bar?.task?.record?.id])
 
-  // デバッグ用：コンポーネントの再レンダリングを追跡
-  React.useEffect(() => {
-    console.log('DraggableBlockItem - component rendered:', {
-      timestamp: new Date().toISOString(),
-      barId: bar?.task?.record?.id,
-    })
-  })
+    const style = {
+      opacity: isActive ? 0.5 : 1,
+      boxShadow: isActive ? '0 4px 8px rgba(0, 0, 0, 0.1)' : undefined,
+      transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+      transition,
+    }
 
-  const style = {
-    opacity: isActive ? 0.5 : 1,
-    boxShadow: isActive ? '0 4px 8px rgba(0, 0, 0, 0.1)' : undefined,
-    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-    transition,
-  }
+    if (!bar?.record) return null
 
-  if (!bar?.record) return null
-
-  return (
-    <div ref={setActivatorNodeRef} style={style}>
-      <div
-        role='none'
-        className={classNames(`${prefixClsTableBody}-row`, bar.record.className)}
-        onClick={() => {
-          onRow?.onClick(bar.record)
-        }}
-      >
-        {columns.map((column, index) => (
-          <div
-            key={column.name}
-            className={`${prefixClsTableBody}-cell`}
-            style={{
-              width: columnsWidth[index],
-              height: rowHeight,
-              minWidth: column.minWidth,
-              maxWidth: column.maxWidth,
-              textAlign: column.align ? column.align : 'left',
-              paddingLeft: index === 0 && tableIndent * (bar._depth + 1) + 10,
-              ...column.style,
-            }}
-          >
-            {column.name === 'dragButton' && column.render && column.render(bar.record) != null && (
-              <button
-                type='button'
-                {...listeners}
-                style={{
-                  cursor: isActive ? 'grabbing' : 'grab',
-                  pointerEvents: 'auto',
-                  touchAction: 'none',
-                }}
-              >
-                {column.render(bar.record)}
-              </button>
-            )}
-            {index === 0 && bar._childrenCount > 0 && (
-              <ExpandIcon bar={bar} onExpand={onExpand} store={store} expandIcon={expandIcon} prefixCls={prefixCls} />
-            )}
-            {column.name !== 'dragButton' && (
-              <span className={`${prefixClsTableBody}-ellipsis`}>
-                {column.render ? column.render(bar.record) : bar.record[column.name]}
-              </span>
-            )}
-          </div>
-        ))}
+    return (
+      <div ref={setActivatorNodeRef} style={style}>
+        <div
+          role='none'
+          className={classNames(`${prefixClsTableBody}-row`, bar.record.className)}
+          onClick={() => {
+            onRow?.onClick(bar.record)
+          }}
+        >
+          {columns.map((column, index) => (
+            <div
+              key={column.name}
+              className={`${prefixClsTableBody}-cell`}
+              style={{
+                width: columnsWidth[index],
+                height: rowHeight,
+                minWidth: column.minWidth,
+                maxWidth: column.maxWidth,
+                textAlign: column.align ? column.align : 'left',
+                paddingLeft: index === 0 && tableIndent * (bar._depth + 1) + 10,
+                ...column.style,
+              }}
+            >
+              {column.name === 'dragButton' && column.render && column.render(bar.record) != null && (
+                <button
+                  type='button'
+                  {...listeners}
+                  style={{
+                    cursor: isActive ? 'grabbing' : 'grab',
+                    pointerEvents: 'auto',
+                    touchAction: 'none',
+                  }}
+                >
+                  {column.render(bar.record)}
+                </button>
+              )}
+              {index === 0 && bar._childrenCount > 0 && (
+                <ExpandIcon bar={bar} onExpand={onExpand} store={store} expandIcon={expandIcon} prefixCls={prefixCls} />
+              )}
+              {column.name !== 'dragButton' && (
+                <span className={`${prefixClsTableBody}-ellipsis`}>
+                  {column.render ? column.render(bar.record) : bar.record[column.name]}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+        {!bar._collapsed && bar.children && bar.children.length > 0 && <ObserverTableRows barList={bar.children} />}
       </div>
-      {/*
-        MEMO: ガントチャート側は _collapsed: true の時はデータから削除しているが（デフォルトの仕様）、タイトル側は _collapsed の値で表示・非表示のコントロールしてデータ自体は存在させる。
-        Drag & Drop でソートしたデータで上書きする時、_collapsed: true でデータが存在しない状態で上書きすると、childrenのデータがない状態で上書きされてしまうため。
-       */}
-      {!bar._collapsed && bar.children && bar.children.length > 0 && <ObserverTableRows barList={bar.children} />}
-    </div>
-  )
-})
+    )
+  })
+}
 
 export default DraggableBlockItem
