@@ -24,7 +24,7 @@ export declare function convertBar({ data, pxUnitAmp, rowHeight, disabled, depth
  *
  * @param {any} arr 数据源
  */
-export declare function flattenDeep(array?: Gantt.Bar[], depth?: number): Gantt.Bar[];
+export declare function flattenDeep(array?: Gantt.Bar[], depth?: number, parent?: Gantt.Bar | undefined): Gantt.Bar[];
 export declare function getMaxRange(bar: Gantt.Bar): {
     translateX: number;
     width: number;

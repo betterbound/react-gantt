@@ -273,13 +273,14 @@ function convertBar(_ref) {
 function flattenDeep() {
   var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+  var parent = arguments.length > 2 ? arguments[2] : undefined;
   var index = 0;
   return array.reduce(function (flat, item) {
-    item._depth = depth; // item._parent = parent
-
+    item._depth = depth;
+    item._parent = parent;
     item._index = index;
     index += 1;
-    return [].concat(_toConsumableArray(flat), [item], _toConsumableArray(item.children && !item._collapsed ? flattenDeep(item.children, depth + 1) : []));
+    return [].concat(_toConsumableArray(flat), [item], _toConsumableArray(item.children && !item._collapsed ? flattenDeep(item.children, depth + 1, item) : []));
   }, []);
 }
 function getMaxRange(bar) {
@@ -6811,7 +6812,8 @@ var ExpandIcon = observer(function (_ref) {
       onExpand = _ref.onExpand,
       store = _ref.store,
       expandIcon = _ref.expandIcon,
-      prefixCls = _ref.prefixCls;
+      prefixCls = _ref.prefixCls,
+      tableIndent = _ref.tableIndent;
 
   var handleClick = function handleClick(event) {
     event.stopPropagation();
@@ -6819,7 +6821,16 @@ var ExpandIcon = observer(function (_ref) {
     store.setRowCollapse(bar.task, !bar._collapsed);
   };
 
-  return /*#__PURE__*/React.createElement("div", null, expandIcon ? expandIcon({
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'absolute',
+      left: tableIndent * bar._depth + 15,
+      background: 'white',
+      zIndex: 9,
+      transform: 'translateX(-52%)',
+      padding: 1
+    }
+  }, expandIcon ? expandIcon({
     level: bar._depth,
     collapsed: bar._collapsed,
     onClick: handleClick
@@ -6857,6 +6868,10 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
     transform: transform ? "translate3d(".concat(transform.x, "px, ").concat(transform.y, "px, 0)") : undefined,
     transition: transition
   };
+  var parent = bar._parent;
+  var grandParent = parent === null || parent === void 0 ? void 0 : parent._parent;
+  var isLastChild = false;
+  if ((grandParent === null || grandParent === void 0 ? void 0 : grandParent.children) && (grandParent === null || grandParent === void 0 ? void 0 : grandParent.children[grandParent.children.length - 1]) === bar._parent) isLastChild = true;
   if (!(bar === null || bar === void 0 ? void 0 : bar.record)) return null;
   return /*#__PURE__*/React.createElement("div", {
     ref: setActivatorNodeRef,
@@ -6877,7 +6892,7 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
         minWidth: column.minWidth,
         maxWidth: column.maxWidth,
         textAlign: column.align ? column.align : 'left',
-        paddingLeft: index === 0 && tableIndent * (bar._depth + 1) + 10
+        paddingLeft: column.name === 'title' ? tableIndent * (bar._depth + 1) + 10 : 12
       }, column.style)
     }, column.name === 'dragButton' && column.render && column.render(bar.record) != null && /*#__PURE__*/React.createElement("button", _objectSpread2(_objectSpread2({
       type: 'button'
@@ -6887,7 +6902,20 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
         pointerEvents: 'auto',
         touchAction: 'none'
       }
-    }), column.render(bar.record)), index === 0 && bar._childrenCount > 0 && /*#__PURE__*/React.createElement(ExpandIcon, {
+    }), column.render(bar.record)), column.name === 'title' && new Array(bar._depth).fill(0).map(function (_, i) {
+      var _classNames;
+
+      return /*#__PURE__*/React.createElement("div", {
+        key: i,
+        className: classNames("".concat(prefixClsTableBody, "-row-indentation"), (_classNames = {}, _defineProperty(_classNames, "".concat(prefixClsTableBody, "-row-indentation-hidden"), isLastChild && i === bar._depth - 2), _defineProperty(_classNames, "".concat(prefixClsTableBody, "-row-indentation-both"), i === bar._depth - 1), _classNames)),
+        style: {
+          top: -(rowHeight / 2) + 1,
+          left: tableIndent * i + 12,
+          width: tableIndent * 1.5 + 5
+        }
+      });
+    }), column.name === 'title' && bar._childrenCount > 0 && /*#__PURE__*/React.createElement(ExpandIcon, {
+      tableIndent: tableIndent,
       bar: bar,
       onExpand: onExpand,
       store: store,
