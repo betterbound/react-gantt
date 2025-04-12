@@ -6867,10 +6867,6 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
     transform: transform ? "translate3d(".concat(transform.x, "px, ").concat(transform.y, "px, 0)") : undefined,
     transition: transition
   };
-  var parent = bar._parent;
-  var grandParent = parent === null || parent === void 0 ? void 0 : parent._parent;
-  var isLastChild = false;
-  if ((grandParent === null || grandParent === void 0 ? void 0 : grandParent.children) && (grandParent === null || grandParent === void 0 ? void 0 : grandParent.children[grandParent.children.length - 1]) === bar._parent) isLastChild = true;
   if (!(bar === null || bar === void 0 ? void 0 : bar.record)) return null;
   return /*#__PURE__*/React.createElement("div", {
     ref: setActivatorNodeRef,
@@ -6884,7 +6880,7 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
   }, columns.map(function (column, index) {
     return /*#__PURE__*/React.createElement("div", {
       key: column.name,
-      className: "".concat(prefixClsTableBody, "-cell"),
+      className: classNames("".concat(prefixClsTableBody, "-cell"), column.name === 'title' && bar._childrenCount === 0 && 'last-child'),
       style: _objectSpread2({
         width: columnsWidth[index],
         height: rowHeight,
@@ -6901,19 +6897,7 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
         pointerEvents: 'auto',
         touchAction: 'none'
       }
-    }), column.render(bar.record)), column.name === 'title' && new Array(bar._depth).fill(0).map(function (_, i) {
-      var _classNames;
-
-      return /*#__PURE__*/React.createElement("div", {
-        key: i,
-        className: classNames("".concat(prefixClsTableBody, "-row-indentation"), (_classNames = {}, _defineProperty(_classNames, "".concat(prefixClsTableBody, "-row-indentation-hidden"), isLastChild && i === bar._depth - 2), _defineProperty(_classNames, "".concat(prefixClsTableBody, "-row-indentation-both"), i === bar._depth - 1), _classNames)),
-        style: {
-          top: -(rowHeight / 2) + 1,
-          left: tableIndent * i + 12,
-          width: tableIndent * 1.5 + 5
-        }
-      });
-    }), column.name === 'title' && bar._childrenCount > 0 && /*#__PURE__*/React.createElement(ExpandIcon, {
+    }), column.render(bar.record)), column.name === 'title' && bar._childrenCount > 0 && /*#__PURE__*/React.createElement(ExpandIcon, {
       tableIndent: tableIndent,
       bar: bar,
       onExpand: onExpand,
