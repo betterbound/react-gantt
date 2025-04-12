@@ -6879,7 +6879,6 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
       onRow === null || onRow === void 0 ? void 0 : onRow.onClick(bar.record);
     }
   }, columns.map(function (column, index) {
-    console.log(bar._depth, bar);
     var barDepth = isNaN(bar._depth) ? 0 : bar._depth;
     return /*#__PURE__*/React.createElement("div", {
       key: column.name,

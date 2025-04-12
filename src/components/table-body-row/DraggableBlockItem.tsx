@@ -94,9 +94,7 @@ const DraggableBlockItem = ({
         }}
       >
         {columns.map((column, index) => {
-          console.log(bar._depth, bar)
           const barDepth = isNaN(bar._depth) ? 0 : bar._depth
-
           return (
             <div
               key={column.name}
