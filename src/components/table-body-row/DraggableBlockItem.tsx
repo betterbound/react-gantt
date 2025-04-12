@@ -80,12 +80,6 @@ const DraggableBlockItem = ({
     transition,
   }
 
-  const parent = bar._parent
-  const grandParent = parent?._parent
-  let isLastChild = false
-  if (grandParent?.children && grandParent?.children[grandParent.children.length - 1] === bar._parent)
-    isLastChild = true
-
   if (!bar?.record) return null
 
   return (
@@ -101,7 +95,7 @@ const DraggableBlockItem = ({
           return (
             <div
               key={column.name}
-              className={`${prefixClsTableBody}-cell`}
+              className={classNames(`${prefixClsTableBody}-cell`, column.name === 'title' && bar._childrenCount === 0 && 'last-child')}
               style={{
                 width: columnsWidth[index],
                 height: rowHeight,
@@ -125,23 +119,6 @@ const DraggableBlockItem = ({
                   {column.render(bar.record)}
                 </button>
               )}
-              {column.name === 'title' &&
-                new Array(bar._depth).fill(0).map((_, i) => {
-                  return (
-                    <div
-                      key={i}
-                      className={classNames(`${prefixClsTableBody}-row-indentation`, {
-                        [`${prefixClsTableBody}-row-indentation-hidden`]: isLastChild && i === bar._depth - 2,
-                        [`${prefixClsTableBody}-row-indentation-both`]: i === bar._depth - 1,
-                      })}
-                      style={{
-                        top: -(rowHeight / 2) + 1,
-                        left: tableIndent * i + 12,
-                        width: tableIndent * 1.5 + 5,
-                      }}
-                    />
-                  )
-                })}
               {column.name === 'title' && bar._childrenCount > 0 && (
                 <ExpandIcon
                   tableIndent={tableIndent}

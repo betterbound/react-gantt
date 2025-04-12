@@ -143,7 +143,10 @@ export function convertBar({ data, pxUnitAmp, rowHeight, disabled, depth = 0, pa
  * @param {any} arr 数据源
  */
 // MEMO: ガントチャート側のデータで使用。_collapsed: true のデータは削除し、データをフラットにして position を計算している。
-export function flattenDeep(array: Gantt.Bar[] = [], depth = 0, 
+export function flattenDeep(
+  array: Gantt.Bar[] = [],
+  depth = 0
+  // MEMO: 型を Item[] から Bar[] に変更したため parent は不要になる。別の文脈で必要になるかもなので、一旦コメントアウトで対応。
   // parent?: Gantt.Bar | undefined
 ): Gantt.Bar[] {
   let index = 0

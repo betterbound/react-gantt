@@ -64,7 +64,7 @@ export namespace Gantt {
     _depth: number
     _index?: number
     _childrenCount: number
-    _parent?: Item<RecordType> | Bar<RecordType>
+    _parent?: Item<RecordType>
     _parents?: Item<RecordType>[]
   }
   export interface Item<RecordType = DefaultRecordType> {
