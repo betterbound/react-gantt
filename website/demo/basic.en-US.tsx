@@ -222,8 +222,15 @@ const App = () => {
               style: {
                 padding: 0,
               },
-              render: (record) => {
+              render: record => {
                 return <>icon</>
+              },
+            },
+            {
+              name: 'title',
+              label: 'OutputGanttToggleButtons',
+              render: record => {
+                return <>{record.name}</>
               },
             },
             {
@@ -242,16 +249,7 @@ const App = () => {
                 padding: 0,
               },
             },
-            {
-              name: 'title',
-              label: 'OutputGanttToggleButtons',
-              render: record => {
-                return <p>{record.name}</p>
-              },
-              style: {
-                padding: 0,
-              },
-            },
+
             {
               name: 'bookmark',
               label: 'B',

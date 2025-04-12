@@ -26,7 +26,7 @@ export namespace Gantt {
     startDate: Dayjs
     endDate: Dayjs
   }
-  export type Sight = 'day' | 'week' | 'week_in_month' |'month' | 'quarter' | 'halfYear'
+  export type Sight = 'day' | 'week' | 'week_in_month' | 'month' | 'quarter' | 'halfYear'
   export type MoveType = 'left' | 'right' | 'move' | 'create'
 
   export enum ESightValues {
@@ -64,7 +64,7 @@ export namespace Gantt {
     _depth: number
     _index?: number
     _childrenCount: number
-    _parent?: Item<RecordType>
+    _parent?: Item<RecordType> | Bar<RecordType>
     _parents?: Item<RecordType>[]
   }
   export interface Item<RecordType = DefaultRecordType> {
