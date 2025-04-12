@@ -98,7 +98,7 @@ const DraggableBlockItem = ({
           return (
             <div
               key={column.name}
-              className={classNames(`${prefixClsTableBody}-cell`, column.name === 'title' && bar._childrenCount === 0 && 'last-child')}
+              className={classNames(`${prefixClsTableBody}-cell`, column.name === 'title' && bar._childrenCount === 0 && barDepth !== 0 && 'last-child')}
               style={{
                 width: columnsWidth[index],
                 height: rowHeight,

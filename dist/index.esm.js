@@ -6882,7 +6882,7 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
     var barDepth = isNaN(bar._depth) ? 0 : bar._depth;
     return /*#__PURE__*/React.createElement("div", {
       key: column.name,
-      className: classNames("".concat(prefixClsTableBody, "-cell"), column.name === 'title' && bar._childrenCount === 0 && 'last-child'),
+      className: classNames("".concat(prefixClsTableBody, "-cell"), column.name === 'title' && bar._childrenCount === 0 && barDepth !== 0 && 'last-child'),
       style: _objectSpread2({
         width: columnsWidth[index],
         height: rowHeight,
