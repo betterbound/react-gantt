@@ -273,14 +273,13 @@ function convertBar(_ref) {
 function flattenDeep() {
   var array = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
   var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-  var parent = arguments.length > 2 ? arguments[2] : undefined;
   var index = 0;
   return array.reduce(function (flat, item) {
-    item._depth = depth;
-    item._parent = parent;
+    item._depth = depth; // item._parent = parent
+
     item._index = index;
     index += 1;
-    return [].concat(_toConsumableArray(flat), [item], _toConsumableArray(item.children && !item._collapsed ? flattenDeep(item.children, depth + 1, item) : []));
+    return [].concat(_toConsumableArray(flat), [item], _toConsumableArray(item.children && !item._collapsed ? flattenDeep(item.children, depth + 1) : []));
   }, []);
 }
 function getMaxRange(bar) {
