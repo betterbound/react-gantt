@@ -36,11 +36,13 @@ const ExpandIcon = observer(({ bar, onExpand, store, expandIcon, prefixCls, tabl
     store.setRowCollapse(bar.task, !bar._collapsed)
   }
 
+  const barDepth = isNaN(bar._depth) ? 0 : bar._depth
+
   return (
     <div
       style={{
         position: 'absolute',
-        left: tableIndent * bar._depth + 15,
+        left: tableIndent * barDepth + 15,
         background: 'white',
         zIndex: 9,
         transform: 'translateX(-52%)',
@@ -49,12 +51,12 @@ const ExpandIcon = observer(({ bar, onExpand, store, expandIcon, prefixCls, tabl
     >
       {expandIcon ? (
         expandIcon({
-          level: bar._depth,
+          level: barDepth,
           collapsed: bar._collapsed,
           onClick: handleClick,
         })
       ) : (
-        <RowToggler prefixCls={prefixCls} level={bar._depth} collapsed={bar._collapsed} onClick={handleClick} />
+        <RowToggler prefixCls={prefixCls} level={barDepth} collapsed={bar._collapsed} onClick={handleClick} />
       )}
     </div>
   )
@@ -92,7 +94,7 @@ const DraggableBlockItem = ({
         }}
       >
         {columns.map((column, index) => {
-          console.log(bar._depth, bar.record.name)
+          console.log(bar._depth, bar)
           const barDepth = isNaN(bar._depth) ? 0 : bar._depth
 
           return (

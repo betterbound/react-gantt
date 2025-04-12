@@ -6820,22 +6820,23 @@ var ExpandIcon = observer(function (_ref) {
     store.setRowCollapse(bar.task, !bar._collapsed);
   };
 
+  var barDepth = isNaN(bar._depth) ? 0 : bar._depth;
   return /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
-      left: tableIndent * bar._depth + 15,
+      left: tableIndent * barDepth + 15,
       background: 'white',
       zIndex: 9,
       transform: 'translateX(-52%)',
       padding: 1
     }
   }, expandIcon ? expandIcon({
-    level: bar._depth,
+    level: barDepth,
     collapsed: bar._collapsed,
     onClick: handleClick
   }) : /*#__PURE__*/React.createElement(RowToggler, {
     prefixCls: prefixCls,
-    level: bar._depth,
+    level: barDepth,
     collapsed: bar._collapsed,
     onClick: handleClick
   }));
@@ -6878,7 +6879,7 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
       onRow === null || onRow === void 0 ? void 0 : onRow.onClick(bar.record);
     }
   }, columns.map(function (column, index) {
-    console.log(bar._depth, bar.record.name);
+    console.log(bar._depth, bar);
     var barDepth = isNaN(bar._depth) ? 0 : bar._depth;
     return /*#__PURE__*/React.createElement("div", {
       key: column.name,
