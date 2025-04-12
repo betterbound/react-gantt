@@ -6878,6 +6878,9 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
       onRow === null || onRow === void 0 ? void 0 : onRow.onClick(bar.record);
     }
   }, columns.map(function (column, index) {
+    var _a;
+
+    console.log(bar._depth);
     return /*#__PURE__*/React.createElement("div", {
       key: column.name,
       className: classNames("".concat(prefixClsTableBody, "-cell"), column.name === 'title' && bar._childrenCount === 0 && 'last-child'),
@@ -6887,7 +6890,7 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
         minWidth: column.minWidth,
         maxWidth: column.maxWidth,
         textAlign: column.align ? column.align : 'left',
-        paddingLeft: column.name === 'title' ? tableIndent * (bar._depth + 1) + 10 : 12
+        paddingLeft: column.name === 'title' ? tableIndent * (((_a = bar._depth) !== null && _a !== void 0 ? _a : 0) + 1) + 10 : 12
       }, column.style)
     }, column.name === 'dragButton' && column.render && column.render(bar.record) != null && /*#__PURE__*/React.createElement("button", _objectSpread2(_objectSpread2({
       type: 'button'
