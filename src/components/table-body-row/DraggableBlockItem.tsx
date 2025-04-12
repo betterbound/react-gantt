@@ -92,7 +92,9 @@ const DraggableBlockItem = ({
         }}
       >
         {columns.map((column, index) => {
-          console.log(bar._depth)
+          console.log(bar._depth, bar.record.name)
+          const barDepth = isNaN(bar._depth) ? 0 : bar._depth
+
           return (
             <div
               key={column.name}
@@ -103,7 +105,7 @@ const DraggableBlockItem = ({
                 minWidth: column.minWidth,
                 maxWidth: column.maxWidth,
                 textAlign: column.align ? column.align : 'left',
-                paddingLeft: column.name === 'title' ? tableIndent * ((bar._depth ?? 0) + 1) + 10 : 12,
+                paddingLeft: column.name === 'title' ? tableIndent * (barDepth + 1) + 10 : 12,
                 ...column.style,
               }}
             >
