@@ -43,7 +43,6 @@ const ExpandIcon = observer(({ bar, onExpand, store, expandIcon, prefixCls, tabl
       style={{
         position: 'absolute',
         left: tableIndent * barDepth + 15,
-        background: 'white',
         zIndex: 9,
         transform: 'translateX(-52%)',
         padding: 1,
