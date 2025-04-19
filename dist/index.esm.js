@@ -6811,7 +6811,8 @@ var ExpandIcon = observer(function (_ref) {
       onExpand = _ref.onExpand,
       store = _ref.store,
       expandIcon = _ref.expandIcon,
-      prefixCls = _ref.prefixCls;
+      prefixCls = _ref.prefixCls,
+      tableIndent = _ref.tableIndent;
 
   var handleClick = function handleClick(event) {
     event.stopPropagation();
@@ -6819,13 +6820,22 @@ var ExpandIcon = observer(function (_ref) {
     store.setRowCollapse(bar.task, !bar._collapsed);
   };
 
-  return /*#__PURE__*/React.createElement("div", null, expandIcon ? expandIcon({
-    level: bar._depth,
+  var barDepth = isNaN(bar._depth) ? 0 : bar._depth;
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'absolute',
+      left: tableIndent * barDepth + 15,
+      zIndex: 9,
+      transform: 'translateX(-52%)',
+      padding: 1
+    }
+  }, expandIcon ? expandIcon({
+    level: barDepth,
     collapsed: bar._collapsed,
     onClick: handleClick
   }) : /*#__PURE__*/React.createElement(RowToggler, {
     prefixCls: prefixCls,
-    level: bar._depth,
+    level: barDepth,
     collapsed: bar._collapsed,
     onClick: handleClick
   }));
@@ -6858,6 +6868,7 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
     transition: transition
   };
   if (!(bar === null || bar === void 0 ? void 0 : bar.record)) return null;
+  console.log('bar', bar);
   return /*#__PURE__*/React.createElement("div", {
     ref: setActivatorNodeRef,
     style: style
@@ -6868,16 +6879,17 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
       onRow === null || onRow === void 0 ? void 0 : onRow.onClick(bar.record);
     }
   }, columns.map(function (column, index) {
+    var barDepth = isNaN(bar._depth) ? 0 : bar._depth;
     return /*#__PURE__*/React.createElement("div", {
       key: column.name,
-      className: "".concat(prefixClsTableBody, "-cell"),
+      className: classNames("".concat(prefixClsTableBody, "-cell"), column.name === 'title' && bar._childrenCount === 0 && barDepth !== 0 && 'last-child'),
       style: _objectSpread2({
         width: columnsWidth[index],
         height: rowHeight,
         minWidth: column.minWidth,
         maxWidth: column.maxWidth,
         textAlign: column.align ? column.align : 'left',
-        paddingLeft: index === 0 && tableIndent * (bar._depth + 1) + 10
+        paddingLeft: column.name === 'title' ? tableIndent * (barDepth + 1) + 10 : 12
       }, column.style)
     }, column.name === 'dragButton' && column.render && column.render(bar.record) != null && /*#__PURE__*/React.createElement("button", _objectSpread2(_objectSpread2({
       type: 'button'
@@ -6887,7 +6899,8 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
         pointerEvents: 'auto',
         touchAction: 'none'
       }
-    }), column.render(bar.record)), index === 0 && bar._childrenCount > 0 && /*#__PURE__*/React.createElement(ExpandIcon, {
+    }), column.render(bar.record)), column.name === 'title' && bar._childrenCount > 0 && /*#__PURE__*/React.createElement(ExpandIcon, {
+      tableIndent: tableIndent,
       bar: bar,
       onExpand: onExpand,
       store: store,

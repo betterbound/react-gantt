@@ -1,4 +1,3 @@
-import React, { useCallback, useContext, useState } from 'react'
 import {
   DndContext,
   DragOverlay,
@@ -8,23 +7,23 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core'
-import {
-  SortableContext,
-  arrayMove,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
+import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { observer } from 'mobx-react-lite'
+import React, { useCallback, useContext, useState } from 'react'
 import Context from '../../context'
-import ObserverTableRow from '../table-body-row'
 import type { Gantt } from '../../types'
 import { convertBarList } from '../../utils'
+import ObserverTableRow from '../table-body-row'
 
 interface Props {
   barList: Gantt.Bar[]
 }
 
-const updateBarListRecursively = (originalList: Gantt.Bar[], newOrder: Gantt.Bar[], newOrderKeys: string[]): Gantt.Bar[] => {
+const updateBarListRecursively = (
+  originalList: Gantt.Bar[],
+  newOrder: Gantt.Bar[],
+  newOrderKeys: string[]
+): Gantt.Bar[] => {
   const updatedList: Gantt.Bar[] = []
   const remainingBars = [...originalList]
 
@@ -34,7 +33,7 @@ const updateBarListRecursively = (originalList: Gantt.Bar[], newOrder: Gantt.Bar
       const [bar] = remainingBars.splice(index, 1)
       updatedList.push({
         ...newBar,
-        children: updateBarListRecursively(bar.children, newOrder, newOrderKeys)
+        children: updateBarListRecursively(bar.children, newOrder, newOrderKeys),
       })
     }
   })
@@ -42,14 +41,12 @@ const updateBarListRecursively = (originalList: Gantt.Bar[], newOrder: Gantt.Bar
   remainingBars.forEach(bar => {
     updatedList.push({
       ...bar,
-      children: updateBarListRecursively(bar.children, newOrder, newOrderKeys)
+      children: updateBarListRecursively(bar.children, newOrder, newOrderKeys),
     })
   })
 
   return updatedList
 }
-
-
 
 const ObserverTableRows = ({ barList }: Props) => {
   const { store, orderedBarList } = useContext(Context)
@@ -63,27 +60,29 @@ const ObserverTableRows = ({ barList }: Props) => {
     })
   )
 
-  const handleDragEnd = useCallback((event) => {
-    const { active, over } = event
+  const handleDragEnd = useCallback(
+    event => {
+      const { active, over } = event
 
-    if (!active || !over) {
-      console.warn('Drag ended with incomplete data:', { active, over })
-      return
-    }
+      if (!active || !over) {
+        console.warn('Drag ended with incomplete data:', { active, over })
+        return
+      }
 
-    const oldIndex = barList.findIndex((item) => item.record.id === active.id)
-    const newIndex = barList.findIndex((item) => item.record.id === over.id)
+      const oldIndex = barList.findIndex(item => item.record.id === active.id)
+      const newIndex = barList.findIndex(item => item.record.id === over.id)
 
-    if (active.id !== over.id) {
-      const newOrder = arrayMove(barList, oldIndex, newIndex)
-      const newOrderKeys = newOrder.map(order => order.record.id)
-      const updatedBarList = updateBarListRecursively(originalBarList, newOrder, newOrderKeys)
+      if (active.id !== over.id) {
+        const newOrder = arrayMove(barList, oldIndex, newIndex)
+        const newOrderKeys = newOrder.map(order => order.record.id)
+        const updatedBarList = updateBarListRecursively(originalBarList, newOrder, newOrderKeys)
 
-      store.updateBarListOrder(updatedBarList)
-      orderedBarList?.(convertBarList(newOrder, active.id, over.id))
-    }
-  }, [barList, originalBarList, store, orderedBarList])
-
+        store.updateBarListOrder(updatedBarList)
+        orderedBarList?.(convertBarList(newOrder, active.id, over.id))
+      }
+    },
+    [barList, originalBarList, store, orderedBarList]
+  )
 
   if (barList.length === 0) {
     return (
@@ -101,12 +100,19 @@ const ObserverTableRows = ({ barList }: Props) => {
   }
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={(event) => setActiveId(event.active.id)} onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={event => setActiveId(event.active.id)}
+      onDragEnd={handleDragEnd}
+    >
       <SortableContext items={barList.map(bar => bar.record.id)} strategy={verticalListSortingStrategy}>
-        {barList.map((bar) => <ObserverTableRow key={bar.key} bar={bar} />)}
+        {barList.map(bar => (
+          <ObserverTableRow key={bar.key} bar={bar} />
+        ))}
         <DragOverlay>
           {activeId ? (
-            <ObserverTableRow key={activeId} bar={barList.find((bar) => bar.record.id === activeId)} isActive/>
+            <ObserverTableRow key={activeId} bar={barList.find(bar => bar.record.id === activeId)} isActive />
           ) : null}
         </DragOverlay>
       </SortableContext>

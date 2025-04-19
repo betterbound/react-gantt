@@ -18,6 +18,7 @@ interface ExpandIconProps {
     onClick: (event: React.MouseEvent<HTMLDivElement>) => void
   }) => React.ReactNode
   prefixCls: string
+  tableIndent: number
 }
 interface DraggableBlockItemProps {
   bar: Gantt.Bar
@@ -28,23 +29,33 @@ interface DraggableBlockItemProps {
   setActivatorNodeRef?: (element: HTMLElement | null) => void
 }
 
-const ExpandIcon = observer(({ bar, onExpand, store, expandIcon, prefixCls }: ExpandIconProps) => {
+const ExpandIcon = observer(({ bar, onExpand, store, expandIcon, prefixCls, tableIndent }: ExpandIconProps) => {
   const handleClick = event => {
     event.stopPropagation()
     if (onExpand) onExpand(bar.task.record, !bar._collapsed)
     store.setRowCollapse(bar.task, !bar._collapsed)
   }
 
+  const barDepth = isNaN(bar._depth) ? 0 : bar._depth
+
   return (
-    <div>
+    <div
+      style={{
+        position: 'absolute',
+        left: tableIndent * barDepth + 15,
+        zIndex: 9,
+        transform: 'translateX(-52%)',
+        padding: 1,
+      }}
+    >
       {expandIcon ? (
         expandIcon({
-          level: bar._depth,
+          level: barDepth,
           collapsed: bar._collapsed,
           onClick: handleClick,
         })
       ) : (
-        <RowToggler prefixCls={prefixCls} level={bar._depth} collapsed={bar._collapsed} onClick={handleClick} />
+        <RowToggler prefixCls={prefixCls} level={barDepth} collapsed={bar._collapsed} onClick={handleClick} />
       )}
     </div>
   )
@@ -71,7 +82,7 @@ const DraggableBlockItem = ({
   }
 
   if (!bar?.record) return null
-
+  console.log('bar', bar)
   return (
     <div ref={setActivatorNodeRef} style={style}>
       <div
@@ -81,43 +92,53 @@ const DraggableBlockItem = ({
           onRow?.onClick(bar.record)
         }}
       >
-        {columns.map((column, index) => (
-          <div
-            key={column.name}
-            className={`${prefixClsTableBody}-cell`}
-            style={{
-              width: columnsWidth[index],
-              height: rowHeight,
-              minWidth: column.minWidth,
-              maxWidth: column.maxWidth,
-              textAlign: column.align ? column.align : 'left',
-              paddingLeft: index === 0 && tableIndent * (bar._depth + 1) + 10,
-              ...column.style,
-            }}
-          >
-            {column.name === 'dragButton' && column.render && column.render(bar.record) != null && (
-              <button
-                type='button'
-                {...listeners}
-                style={{
-                  cursor: isActive ? 'grabbing' : 'grab',
-                  pointerEvents: 'auto',
-                  touchAction: 'none',
-                }}
-              >
-                {column.render(bar.record)}
-              </button>
-            )}
-            {index === 0 && bar._childrenCount > 0 && (
-              <ExpandIcon bar={bar} onExpand={onExpand} store={store} expandIcon={expandIcon} prefixCls={prefixCls} />
-            )}
-            {column.name !== 'dragButton' && (
-              <span className={`${prefixClsTableBody}-ellipsis`}>
-                {column.render ? column.render(bar.record) : bar.record[column.name]}
-              </span>
-            )}
-          </div>
-        ))}
+        {columns.map((column, index) => {
+          const barDepth = isNaN(bar._depth) ? 0 : bar._depth
+          return (
+            <div
+              key={column.name}
+              className={classNames(`${prefixClsTableBody}-cell`, column.name === 'title' && bar._childrenCount === 0 && barDepth !== 0 && 'last-child')}
+              style={{
+                width: columnsWidth[index],
+                height: rowHeight,
+                minWidth: column.minWidth,
+                maxWidth: column.maxWidth,
+                textAlign: column.align ? column.align : 'left',
+                paddingLeft: column.name === 'title' ? tableIndent * (barDepth + 1) + 10 : 12,
+                ...column.style,
+              }}
+            >
+              {column.name === 'dragButton' && column.render && column.render(bar.record) != null && (
+                <button
+                  type='button'
+                  {...listeners}
+                  style={{
+                    cursor: isActive ? 'grabbing' : 'grab',
+                    pointerEvents: 'auto',
+                    touchAction: 'none',
+                  }}
+                >
+                  {column.render(bar.record)}
+                </button>
+              )}
+              {column.name === 'title' && bar._childrenCount > 0 && (
+                <ExpandIcon
+                  tableIndent={tableIndent}
+                  bar={bar}
+                  onExpand={onExpand}
+                  store={store}
+                  expandIcon={expandIcon}
+                  prefixCls={prefixCls}
+                />
+              )}
+              {column.name !== 'dragButton' && (
+                <span className={`${prefixClsTableBody}-ellipsis`}>
+                  {column.render ? column.render(bar.record) : bar.record[column.name]}
+                </span>
+              )}
+            </div>
+          )
+        })}
       </div>
       {/*
         MEMO: ガントチャート側は _collapsed: true の時はデータから削除しているが（デフォルトの仕様）、タイトル側は _collapsed の値で表示・非表示のコントロールしてデータ自体は存在させる。
