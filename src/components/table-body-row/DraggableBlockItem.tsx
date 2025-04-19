@@ -82,7 +82,7 @@ const DraggableBlockItem = ({
   }
 
   if (!bar?.record) return null
-
+  console.log('bar', bar)
   return (
     <div ref={setActivatorNodeRef} style={style}>
       <div

@@ -6868,6 +6868,7 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
     transition: transition
   };
   if (!(bar === null || bar === void 0 ? void 0 : bar.record)) return null;
+  console.log('bar', bar);
   return /*#__PURE__*/React.createElement("div", {
     ref: setActivatorNodeRef,
     style: style
