@@ -84,21 +84,6 @@ const ObserverTableRows = ({ barList }: Props) => {
     [barList, originalBarList, store, orderedBarList]
   )
 
-  if (barList.length === 0) {
-    return (
-      <div
-        style={{
-          textAlign: 'center',
-          color: ' rgba(0,0,0,0.65)',
-          marginTop: 30,
-          fontSize: 14,
-        }}
-      >
-        該当するデータがありません
-      </div>
-    )
-  }
-
   return (
     <DndContext
       sensors={sensors}

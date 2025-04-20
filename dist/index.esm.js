@@ -7002,18 +7002,6 @@ var ObserverTableRows = function ObserverTableRows(_ref) {
       orderedBarList === null || orderedBarList === void 0 ? void 0 : orderedBarList(convertBarList(newOrder, active.id, over.id));
     }
   }, [barList, originalBarList, store, orderedBarList]);
-
-  if (barList.length === 0) {
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        textAlign: 'center',
-        color: ' rgba(0,0,0,0.65)',
-        marginTop: 30,
-        fontSize: 14
-      }
-    }, "\u8A72\u5F53\u3059\u308B\u30C7\u30FC\u30BF\u304C\u3042\u308A\u307E\u305B\u3093");
-  }
-
   return /*#__PURE__*/React.createElement(DndContext, {
     sensors: sensors,
     collisionDetection: closestCenter,
