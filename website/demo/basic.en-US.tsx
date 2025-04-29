@@ -7,6 +7,7 @@ interface Data {
   name: string
   startDate: string
   endDate: string
+  fractionalIndex: string
   className: string
   barItems?: {
     id: string
@@ -29,6 +30,7 @@ function createData(len: number) {
       endDate: dayjs()
         .add(i + 2, 'day')
         .format('YYYY-MM-DD'),
+      fractionalIndex: `a${i}`,
       className: 'blue',
       children: [
         {
@@ -40,6 +42,7 @@ function createData(len: number) {
           endDate: dayjs()
             .add(i + 2, 'day')
             .format('YYYY-MM-DD'),
+          fractionalIndex: 'a0',
           className: 'gray',
           children: [
             {
@@ -51,6 +54,7 @@ function createData(len: number) {
               endDate: dayjs()
                 .add(i + 2, 'day')
                 .format('YYYY-MM-DD'),
+              fractionalIndex: 'a0',
               className: 'white',
               barItems: [
                 {
@@ -70,6 +74,7 @@ function createData(len: number) {
               endDate: dayjs()
                 .add(i + 3, 'day')
                 .format('YYYY-MM-DD'),
+              fractionalIndex: 'a1',
               className: 'white',
               barItems: [
                 {
@@ -103,6 +108,7 @@ function createData(len: number) {
               endDate: dayjs()
                 .add(i + 6, 'day')
                 .format('YYYY-MM-DD'),
+              fractionalIndex: 'a2',
               className: 'white',
               barItems: [
                 {
@@ -144,6 +150,7 @@ function createData(len: number) {
           endDate: dayjs()
             .add(i + 4, 'day')
             .format('YYYY-MM-DD'),
+          fractionalIndex: 'a1',
           className: 'gray',
           children: [
             {
@@ -156,6 +163,7 @@ function createData(len: number) {
               endDate: dayjs()
                 .add(i + 2, 'day')
                 .format('YYYY-MM-DD'),
+              fractionalIndex: 'a0',
               className: 'white',
               barItems: [
                 {
@@ -181,6 +189,7 @@ function createData(len: number) {
           endDate: dayjs()
             .add(i + 5, 'day')
             .format('YYYY-MM-DD'),
+          fractionalIndex: 'a1',
           className: 'gray',
           children: [
             {
@@ -192,6 +201,7 @@ function createData(len: number) {
               endDate: dayjs()
                 .add(i + 2, 'day')
                 .format('YYYY-MM-DD'),
+              fractionalIndex: 'a0',
               className: 'white',
             },
           ],
@@ -203,17 +213,18 @@ function createData(len: number) {
 }
 
 const App = () => {
-  const [data, setData] = useState(createData(20))
+  const [data, setData] = useState(createData(9))
   const handleClick = e => {
     console.log(e, e.currentTarget.value, e.currentTarget.innerText)
   }
-
+  console.log(data)
   return (
     <>
       <div style={{ width: '100%', height: 500 }}>
         <RcGantt<Data>
           data={data}
           rowHeight={80}
+          tableIndent={20}
           columns={[
             {
               name: 'dragButton',

@@ -12,7 +12,6 @@ import { observer } from 'mobx-react-lite'
 import React, { useCallback, useContext, useState } from 'react'
 import Context from '../../context'
 import type { Gantt } from '../../types'
-import { convertBarList } from '../../utils'
 import ObserverTableRow from '../table-body-row'
 
 interface Props {
@@ -77,8 +76,15 @@ const ObserverTableRows = ({ barList }: Props) => {
         const newOrderKeys = newOrder.map(order => order.record.id)
         const updatedBarList = updateBarListRecursively(originalBarList, newOrder, newOrderKeys)
 
+        const prevFractionalIndex = newIndex === 0 ? null : newOrder[newIndex - 1].record.fractionalIndex
+        const nextFractionalIndex = newIndex === barList.length - 1 ? null : newOrder[newIndex + 1].record.fractionalIndex
+
         store.updateBarListOrder(updatedBarList)
-        orderedBarList?.(convertBarList(newOrder, active.id, over.id))
+        orderedBarList?.({
+          id: active.id,
+          prevFractionalIndex,
+          nextFractionalIndex
+        })
       }
     },
     [barList, originalBarList, store, orderedBarList]

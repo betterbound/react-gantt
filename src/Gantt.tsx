@@ -18,7 +18,7 @@ import './Gantt.less'
 import { zhCN } from './locales'
 import GanttStore from './store'
 import type { DefaultRecordType, Gantt } from './types'
-import type { ConvertedBarList } from './utils'
+import type { OrderedBarList } from './utils'
 
 const prefixCls = 'gantt'
 
@@ -66,7 +66,7 @@ export interface GanttProps<RecordType = DefaultRecordType> {
   renderDaysText?: GanttContext<RecordType>['renderDaysText']
   onExpand?: GanttContext<RecordType>['onExpand']
   onTimeAxisClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
-  orderedBarList?: (barList: ConvertedBarList) => void
+  orderedBarList?: (barList: OrderedBarList) => void
   showChangeBarSize?: boolean
   canMoveBar?: boolean
   timeAxisMinorStyle?: {}
@@ -162,7 +162,7 @@ const GanttComponent = <RecordType extends DefaultRecordType>(props: GanttProps<
     customSights = [],
     locale = { ...defaultLocale },
     hideTable = false,
-    tableSize
+    tableSize,
   } = props
 
   const store = useMemo(() => new GanttStore({ rowHeight, disabled, customSights, locale, tableSize }), [rowHeight])
@@ -229,7 +229,7 @@ const GanttComponent = <RecordType extends DefaultRecordType>(props: GanttProps<
       timeAxisMinorStyle,
       allowAddBar,
       hideTable,
-      tableSize
+      tableSize,
     }),
     [
       store,
@@ -258,7 +258,7 @@ const GanttComponent = <RecordType extends DefaultRecordType>(props: GanttProps<
       timeAxisMinorStyle,
       allowAddBar,
       hideTable,
-      tableSize
+      tableSize,
     ]
   )
 

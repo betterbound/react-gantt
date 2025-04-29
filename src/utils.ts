@@ -10,13 +10,10 @@ interface ConvertBar {
   parents?: Gantt.Item[] | undefined
 }
 
-export interface ConvertedBarList {
-  activeId: string
-  overId: string
-  parents: {
-    id: string
-    depth: number
-  }[]
+export interface OrderedBarList {
+  id: string
+  prevFractionalIndex: string | null
+  nextFractionalIndex: string | null
 }
 
 // MEMO: 再帰的に_childrenCountの合計を計算する関数
@@ -27,15 +24,6 @@ export function getChildrenCount(barList: Gantt.Bar[]): number {
     const childrenCount = getChildrenCount(curr.children)
     return prev + curr._childrenCount + childrenCount
   }, 0)
-}
-
-// MEMO: アプリ側へ渡すデータに変換する関数
-export function convertBarList(barList: Gantt.Bar[], activeId: string, overId: string): ConvertedBarList {
-  const parents = barList[0]._parents.map((parent, index) => {
-    return { id: parent.record.id, depth: index }
-  })
-
-  return { activeId, overId, parents }
 }
 
 export function convertItem(barList: Gantt.Bar[], depth = 0, parents?: Gantt.Bar[] | undefined): Gantt.Item[] {
