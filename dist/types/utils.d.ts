@@ -7,16 +7,12 @@ interface ConvertBar {
     depth?: number;
     parents?: Gantt.Item[] | undefined;
 }
-export interface ConvertedBarList {
-    activeId: string;
-    overId: string;
-    parents: {
-        id: string;
-        depth: number;
-    }[];
+export interface OrderedBarList {
+    id: string;
+    prevFractionalIndex: string | null;
+    nextFractionalIndex: string | null;
 }
 export declare function getChildrenCount(barList: Gantt.Bar[]): number;
-export declare function convertBarList(barList: Gantt.Bar[], activeId: string, overId: string): ConvertedBarList;
 export declare function convertItem(barList: Gantt.Bar[], depth?: number, parents?: Gantt.Bar[] | undefined): Gantt.Item[];
 export declare function convertBar({ data, pxUnitAmp, rowHeight, disabled, depth, parents }: ConvertBar): Gantt.Bar<import("./types").DefaultRecordType>[];
 /**

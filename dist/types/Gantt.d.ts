@@ -3,7 +3,7 @@ import React from 'react';
 import type { GanttContext } from './context';
 import './Gantt.less';
 import type { DefaultRecordType, Gantt } from './types';
-import type { ConvertedBarList } from './utils';
+import type { OrderedBarList } from './utils';
 export interface GanttProps<RecordType = DefaultRecordType> {
     data: Gantt.Record<RecordType>[];
     columns: Gantt.Column[];
@@ -35,7 +35,7 @@ export interface GanttProps<RecordType = DefaultRecordType> {
     renderDaysText?: GanttContext<RecordType>['renderDaysText'];
     onExpand?: GanttContext<RecordType>['onExpand'];
     onTimeAxisClick?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-    orderedBarList?: (barList: ConvertedBarList) => void;
+    orderedBarList?: (barList: OrderedBarList) => void;
     showChangeBarSize?: boolean;
     canMoveBar?: boolean;
     timeAxisMinorStyle?: {};

@@ -149,21 +149,6 @@ function getChildrenCount(barList) {
     var childrenCount = getChildrenCount(curr.children);
     return prev + curr._childrenCount + childrenCount;
   }, 0);
-} // MEMO: アプリ側へ渡すデータに変換する関数
-
-function convertBarList(barList, activeId, overId) {
-  var parents = barList[0]._parents.map(function (parent, index) {
-    return {
-      id: parent.record.id,
-      depth: index
-    };
-  });
-
-  return {
-    activeId: activeId,
-    overId: overId,
-    parents: parents
-  };
 }
 function convertItem(barList) {
   var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
@@ -6998,8 +6983,14 @@ var ObserverTableRows = function ObserverTableRows(_ref) {
         return order.record.id;
       });
       var updatedBarList = updateBarListRecursively(originalBarList, newOrder);
+      var prevFractionalIndex = newIndex === 0 ? null : newOrder[newIndex - 1].record.fractionalIndex;
+      var nextFractionalIndex = newIndex === barList.length - 1 ? null : newOrder[newIndex + 1].record.fractionalIndex;
       store.updateBarListOrder(updatedBarList);
-      orderedBarList === null || orderedBarList === void 0 ? void 0 : orderedBarList(convertBarList(newOrder, active.id, over.id));
+      orderedBarList === null || orderedBarList === void 0 ? void 0 : orderedBarList({
+        id: active.id,
+        prevFractionalIndex: prevFractionalIndex,
+        nextFractionalIndex: nextFractionalIndex
+      });
     }
   }, [barList, originalBarList, store, orderedBarList]);
   return /*#__PURE__*/React.createElement(DndContext, {
