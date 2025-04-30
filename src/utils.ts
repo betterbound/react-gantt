@@ -12,8 +12,14 @@ interface ConvertBar {
 
 export interface OrderedBarList {
   id: string
-  prevFractionalIndex: string | null
-  nextFractionalIndex: string | null
+  slicedOrderItem?: {
+    lastFractionalIndex: string | null
+    slicedOrderIds: string[]
+  }
+  fractionalIndex?: {
+    prev: string | null
+    next: string | null
+  }
 }
 
 // MEMO: 再帰的に_childrenCountの合計を計算する関数
@@ -103,13 +109,13 @@ export function convertBar({ data, pxUnitAmp, rowHeight, disabled, depth = 0, pa
       children: !item.children
         ? []
         : convertBar({
-          data: item.children,
-          pxUnitAmp,
-          rowHeight,
-          disabled,
-          depth: item._depth + 1,
-          parents: [...(parents || []), item],
-        }),
+            data: item.children,
+            pxUnitAmp,
+            rowHeight,
+            disabled,
+            depth: item._depth + 1,
+            parents: [...(parents || []), item],
+          }),
       _group: item.group,
       _collapsed: item.collapsed, // 訳: 折りたたみかどうか
       _depth: depth as number, // 訳: 子ノードの深さを示す
