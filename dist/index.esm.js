@@ -6959,6 +6959,8 @@ var ObserverTableRows = function ObserverTableRows(_ref) {
     coordinateGetter: sortableKeyboardCoordinates
   }));
   var handleDragEnd = useCallback(function (event) {
+    var _a;
+
     var active = event.active,
         over = event.over;
 
@@ -6976,6 +6978,9 @@ var ObserverTableRows = function ObserverTableRows(_ref) {
     var newIndex = barList.findIndex(function (item) {
       return item.record.id === over.id;
     });
+    var activeItem = barList[oldIndex];
+    var overItem = barList[newIndex];
+    var isWithoutFractionalIndex = activeItem.record.fractionalIndex === undefined || overItem.record.fractionalIndex === undefined;
 
     if (active.id !== over.id) {
       var newOrder = arrayMove(barList, oldIndex, newIndex);
@@ -6985,12 +6990,34 @@ var ObserverTableRows = function ObserverTableRows(_ref) {
       var updatedBarList = updateBarListRecursively(originalBarList, newOrder);
       var prevFractionalIndex = newIndex === 0 ? null : newOrder[newIndex - 1].record.fractionalIndex;
       var nextFractionalIndex = newIndex === barList.length - 1 ? null : newOrder[newIndex + 1].record.fractionalIndex;
-      store.updateBarListOrder(updatedBarList);
-      orderedBarList === null || orderedBarList === void 0 ? void 0 : orderedBarList({
-        id: active.id,
-        prevFractionalIndex: prevFractionalIndex,
-        nextFractionalIndex: nextFractionalIndex
+      var newOrderIds = newOrder.map(function (order) {
+        return order.record.id;
+      }); // 自分は record.fractionalIndex を持っているが、次のアイテムは record.fractionalIndex を持っていないアイテムの index を取得する
+      // isWithoutFractionalIndex の場合、fractionalIndex を持っていないアイテムに、
+      // newOrder[transitionIndex].record.fractionalIndex の次から新しく fractionalIndex を設定するため
+
+      var transitionIndex = newOrder.findIndex(function (item, index) {
+        // Current item has fractionalIndex, but next item doesn't
+        var currentHasFractionalIndex = item.record.fractionalIndex !== undefined;
+        var isLastItem = index === newOrder.length - 1;
+        var nextHasNoFractionalIndex = !isLastItem && newOrder[index + 1].record.fractionalIndex === undefined;
+        return currentHasFractionalIndex && (isLastItem || nextHasNoFractionalIndex);
       });
+      var slicedOrderIds = newOrderIds.slice(transitionIndex + 1, newIndex + 1);
+      store.updateBarListOrder(updatedBarList);
+      orderedBarList === null || orderedBarList === void 0 ? void 0 : orderedBarList(_objectSpread2({
+        id: active.id
+      }, isWithoutFractionalIndex && slicedOrderIds.length > 0 ? {
+        slicedOrderItem: {
+          lastFractionalIndex: (_a = newOrder[transitionIndex]) === null || _a === void 0 ? void 0 : _a.record.fractionalIndex,
+          slicedOrderIds: slicedOrderIds
+        }
+      } : {
+        fractionalIndex: {
+          prev: prevFractionalIndex,
+          next: nextFractionalIndex
+        }
+      }));
     }
   }, [barList, originalBarList, store, orderedBarList]);
   return /*#__PURE__*/React.createElement(DndContext, {

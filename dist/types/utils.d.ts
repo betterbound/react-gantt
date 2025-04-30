@@ -9,8 +9,14 @@ interface ConvertBar {
 }
 export interface OrderedBarList {
     id: string;
-    prevFractionalIndex: string | null;
-    nextFractionalIndex: string | null;
+    slicedOrderItem?: {
+        lastFractionalIndex: string | null;
+        slicedOrderIds: string[];
+    };
+    fractionalIndex?: {
+        prev: string | null;
+        next: string | null;
+    };
 }
 export declare function getChildrenCount(barList: Gantt.Bar[]): number;
 export declare function convertItem(barList: Gantt.Bar[], depth?: number, parents?: Gantt.Bar[] | undefined): Gantt.Item[];
