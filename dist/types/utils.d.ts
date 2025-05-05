@@ -9,10 +9,7 @@ interface ConvertBar {
 }
 export interface OrderedBarList {
     id: string;
-    slicedOrderItem?: {
-        lastFractionalIndex: string | null;
-        slicedOrderIds: string[];
-    };
+    orderedItemIds?: string[];
     fractionalIndex?: {
         prev: string | null;
         next: string | null;
