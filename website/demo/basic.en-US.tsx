@@ -7,7 +7,7 @@ interface Data {
   name: string
   startDate: string
   endDate: string
-  fractionalIndex: string
+  fractionalIndex?: string
   className: string
   barItems?: {
     id: string
@@ -47,7 +47,7 @@ function createData(len: number) {
           children: [
             {
               id: 100,
-              name: `TASK_100_${i}`,
+              name: 'a0',
               startDate: dayjs()
                 .subtract(i + 2, 'day')
                 .format('YYYY-MM-DD'),
@@ -65,80 +65,80 @@ function createData(len: number) {
                 },
               ],
             },
-            {
-              id: 101,
-              name: `TASK_101_${i}`,
-              startDate: dayjs()
-                .subtract(i + 3, 'day')
-                .format('YYYY-MM-DD'),
-              endDate: dayjs()
-                .add(i + 3, 'day')
-                .format('YYYY-MM-DD'),
-              fractionalIndex: 'a1',
-              className: 'white',
-              barItems: [
-                {
-                  id: `${i}-2`,
-                  icon: <span>B</span>,
-                  startDate: dayjs()
-                    .subtract(i - 1, 'week')
-                    .format('YYYY-MM-DD'),
-                  endDate: dayjs()
-                    .add(i + 1, 'week')
-                    .format('YYYY-MM-DD'),
-                },
-                {
-                  id: `${i}-3`,
-                  icon: <span>C</span>,
-                  startDate: dayjs()
-                    .subtract(i - 3, 'week')
-                    .format('YYYY-MM-DD'),
-                  endDate: dayjs()
-                    .add(i + 3, 'week')
-                    .format('YYYY-MM-DD'),
-                },
-              ],
-            },
-            {
-              id: 102,
-              name: `TASK_102_${i}`,
-              startDate: dayjs()
-                .subtract(i + 6, 'day')
-                .format('YYYY-MM-DD'),
-              endDate: dayjs()
-                .add(i + 6, 'day')
-                .format('YYYY-MM-DD'),
-              fractionalIndex: 'a2',
-              className: 'white',
-              barItems: [
-                {
-                  id: `${i}-1`,
-                  icon: <span>A</span>,
-                  startDate: dayjs().subtract(i, 'week').format('YYYY-MM-DD'),
-                  endDate: dayjs().add(i, 'week').format('YYYY-MM-DD'),
-                },
-                {
-                  id: `${i}-2`,
-                  icon: <span>B</span>,
-                  startDate: dayjs()
-                    .subtract(i - 2, 'week')
-                    .format('YYYY-MM-DD'),
-                  endDate: dayjs()
-                    .add(i + 1, 'week')
-                    .format('YYYY-MM-DD'),
-                },
-                {
-                  id: `${i}-3`,
-                  icon: <span>C</span>,
-                  startDate: dayjs()
-                    .subtract(i - 3, 'week')
-                    .format('YYYY-MM-DD'),
-                  endDate: dayjs()
-                    .add(i + 3, 'week')
-                    .format('YYYY-MM-DD'),
-                },
-              ],
-            },
+            // {
+            //   id: 101,
+            //   name: 'a1',
+            //   startDate: dayjs()
+            //     .subtract(i + 3, 'day')
+            //     .format('YYYY-MM-DD'),
+            //   endDate: dayjs()
+            //     .add(i + 3, 'day')
+            //     .format('YYYY-MM-DD'),
+            //   fractionalIndex: 'a1',
+            //   className: 'white',
+            //   barItems: [
+            //     {
+            //       id: `${i}-2`,
+            //       icon: <span>B</span>,
+            //       startDate: dayjs()
+            //         .subtract(i - 1, 'week')
+            //         .format('YYYY-MM-DD'),
+            //       endDate: dayjs()
+            //         .add(i + 1, 'week')
+            //         .format('YYYY-MM-DD'),
+            //     },
+            //     {
+            //       id: `${i}-3`,
+            //       icon: <span>C</span>,
+            //       startDate: dayjs()
+            //         .subtract(i - 3, 'week')
+            //         .format('YYYY-MM-DD'),
+            //       endDate: dayjs()
+            //         .add(i + 3, 'week')
+            //         .format('YYYY-MM-DD'),
+            //     },
+            //   ],
+            // },
+            // {
+            //   id: 102,
+            //   name: 'a2',
+            //   startDate: dayjs()
+            //     .subtract(i + 6, 'day')
+            //     .format('YYYY-MM-DD'),
+            //   endDate: dayjs()
+            //     .add(i + 6, 'day')
+            //     .format('YYYY-MM-DD'),
+            //   fractionalIndex: 'a2',
+            //   className: 'white',
+            //   barItems: [
+            //     {
+            //       id: `${i}-1`,
+            //       icon: <span>A</span>,
+            //       startDate: dayjs().subtract(i, 'week').format('YYYY-MM-DD'),
+            //       endDate: dayjs().add(i, 'week').format('YYYY-MM-DD'),
+            //     },
+            //     {
+            //       id: `${i}-2`,
+            //       icon: <span>B</span>,
+            //       startDate: dayjs()
+            //         .subtract(i - 2, 'week')
+            //         .format('YYYY-MM-DD'),
+            //       endDate: dayjs()
+            //         .add(i + 1, 'week')
+            //         .format('YYYY-MM-DD'),
+            //     },
+            //     {
+            //       id: `${i}-3`,
+            //       icon: <span>C</span>,
+            //       startDate: dayjs()
+            //         .subtract(i - 3, 'week')
+            //         .format('YYYY-MM-DD'),
+            //       endDate: dayjs()
+            //         .add(i + 3, 'week')
+            //         .format('YYYY-MM-DD'),
+            //     },
+            //   ],
+            // },
             {
               id: 103,
               name: `TASK_103_${i}`,

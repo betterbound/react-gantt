@@ -74,7 +74,8 @@ const ObserverTableRows = ({ barList }: Props) => {
       const activeItem = barList[oldIndex]
       const overItem = barList[newIndex]
 
-      const isWithoutFractionalIndex =
+      // 自分 or 被せたのアイテムの fractionalIndex が undefined の場合、true
+      const hasWithoutFractionalIndex =
         activeItem.record.fractionalIndex === undefined || overItem.record.fractionalIndex === undefined
 
       if (active.id !== over.id) {
@@ -88,30 +89,11 @@ const ObserverTableRows = ({ barList }: Props) => {
 
         const newOrderIds = newOrder.map(order => order.record.id)
 
-        // 自分は record.fractionalIndex を持っているが、次のアイテムは record.fractionalIndex を持っていないアイテムの index を取得する
-        // isWithoutFractionalIndex の場合、fractionalIndex を持っていないアイテムに、
-        // newOrder[transitionIndex].record.fractionalIndex の次から新しく fractionalIndex を設定するため
-        const transitionIndex = newOrder.findIndex((item, index) => {
-          // Current item has fractionalIndex, but next item doesn't
-          const currentHasFractionalIndex = item.record.fractionalIndex !== undefined
-          const isLastItem = index === newOrder.length - 1
-          const nextHasNoFractionalIndex = !isLastItem && newOrder[index + 1].record.fractionalIndex === undefined
-
-          return currentHasFractionalIndex && (isLastItem || nextHasNoFractionalIndex)
-        })
-
-        const slicedOrderIds = newOrderIds.slice(transitionIndex + 1, newIndex + 1)
-
         store.updateBarListOrder(updatedBarList)
         orderedBarList?.({
           id: active.id,
-          ...(isWithoutFractionalIndex && slicedOrderIds.length > 0
-            ? {
-                slicedOrderItem: {
-                  lastFractionalIndex: newOrder[transitionIndex]?.record.fractionalIndex,
-                  slicedOrderIds,
-                },
-              }
+          ...(hasWithoutFractionalIndex
+            ? { orderedItemIds: newOrderIds }
             : {
                 fractionalIndex: {
                   prev: prevFractionalIndex,
