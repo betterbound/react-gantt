@@ -178,7 +178,7 @@ const ObserverTableRows = ({ barList }: Props) => {
         }
 
         store.updateBarListOrder(finalUpdatedBarList)
-        console.log({ finalUpdatedBarList })
+
         orderedBarList?.({
           orderedItems: orderedBarListWithFractionalIndex,
         })

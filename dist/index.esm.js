@@ -7095,9 +7095,6 @@ var ObserverTableRows = function ObserverTableRows(_ref) {
       }
 
       store.updateBarListOrder(finalUpdatedBarList);
-      console.log({
-        finalUpdatedBarList: finalUpdatedBarList
-      });
       orderedBarList === null || orderedBarList === void 0 ? void 0 : orderedBarList({
         orderedItems: orderedBarListWithFractionalIndex
       });
