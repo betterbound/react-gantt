@@ -11,12 +11,10 @@ interface ConvertBar {
 }
 
 export interface OrderedBarList {
-  id: string
-  orderedItemIds?: string[]
-  fractionalIndex?: {
-    prev: string | null
-    next: string | null
-  }
+  orderedItems: {
+    workItemId: string
+    fractionalIndex: string
+  }[]
 }
 
 // MEMO: 再帰的に_childrenCountの合計を計算する関数

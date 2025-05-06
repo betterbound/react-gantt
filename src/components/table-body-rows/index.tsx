@@ -8,6 +8,7 @@ import {
   useSensors,
 } from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { generateKeyBetween } from 'fractional-indexing'
 import { observer } from 'mobx-react-lite'
 import React, { useCallback, useContext, useState } from 'react'
 import Context from '../../context'
@@ -45,6 +46,37 @@ const updateBarListRecursively = (
   })
 
   return updatedList
+}
+
+const updateFractionalIndicesRecursively = (
+  barList: Gantt.Bar[],
+  orderedItems: { workItemId: string; fractionalIndex: string }[]
+): Gantt.Bar[] => {
+  return barList.map(bar => {
+    // Find if there's a corresponding ordered item for this bar
+    const orderedItem = orderedItems.find(item => item.workItemId === bar.record.id)
+
+    // Update the fractional index if there is a match
+    const updatedBar = orderedItem
+      ? {
+          ...bar,
+          record: {
+            ...bar.record,
+            fractionalIndex: orderedItem.fractionalIndex,
+          },
+        }
+      : bar
+
+    // Recursively update children
+    if (updatedBar.children && updatedBar.children.length > 0) {
+      return {
+        ...updatedBar,
+        children: updateFractionalIndicesRecursively(updatedBar.children, orderedItems),
+      }
+    }
+
+    return updatedBar
+  })
 }
 
 const ObserverTableRows = ({ barList }: Props) => {
@@ -89,17 +121,50 @@ const ObserverTableRows = ({ barList }: Props) => {
 
         const newOrderIds = newOrder.map(order => order.record.id)
 
-        store.updateBarListOrder(updatedBarList)
+        const orderedItems = () => {
+          if (!hasWithoutFractionalIndex) {
+            const newFractionalIndex = generateKeyBetween(prevFractionalIndex, nextFractionalIndex)
+            const orderedItems = [
+              {
+                workItemId: active.id,
+                fractionalIndex: newFractionalIndex,
+              },
+            ]
+            return orderedItems
+          }
+
+          if (hasWithoutFractionalIndex) {
+            let prev = null
+            const orderedItems: { workItemId: string; fractionalIndex: string }[] = []
+
+            for (const id of newOrderIds) {
+              const fractionalIndex = generateKeyBetween(prev, null)
+              orderedItems.push({
+                workItemId: id,
+                fractionalIndex: fractionalIndex,
+              })
+
+              prev = fractionalIndex
+            }
+            return orderedItems
+          }
+
+          return []
+        }
+
+        const orderedBarListWithFractionalIndex = orderedItems()
+
+        let finalUpdatedBarList = updatedBarList
+
+        // Apply the fractional indices to the updated bar list if available
+        if (orderedBarListWithFractionalIndex && orderedBarListWithFractionalIndex.length > 0) {
+          finalUpdatedBarList = updateFractionalIndicesRecursively(updatedBarList, orderedBarListWithFractionalIndex)
+        }
+
+        store.updateBarListOrder(finalUpdatedBarList)
+        console.log({ finalUpdatedBarList })
         orderedBarList?.({
-          id: active.id,
-          ...(hasWithoutFractionalIndex
-            ? { orderedItemIds: newOrderIds }
-            : {
-                fractionalIndex: {
-                  prev: prevFractionalIndex,
-                  next: nextFractionalIndex,
-                },
-              }),
+          orderedItems: orderedBarListWithFractionalIndex,
         })
       }
     },
