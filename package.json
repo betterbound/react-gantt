@@ -50,6 +50,7 @@
     "ahooks": "^2.9.2",
     "classnames": "^2.2.6",
     "dayjs": "^1.9.7",
+    "fractional-indexing": "^3.2.0",
     "lodash": "^4.17.20",
     "lodash-es": "^4.17.21",
     "mobx": "4.7.0",

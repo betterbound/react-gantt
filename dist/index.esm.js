@@ -7,6 +7,7 @@ import { createPortal } from 'react-dom';
 import { observable, action, computed, runInAction, toJS } from 'mobx';
 import { useSensors, useSensor, PointerSensor, KeyboardSensor, DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
 import { useSortable, sortableKeyboardCoordinates, arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { generateKeyBetween } from 'fractional-indexing';
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -149,21 +150,6 @@ function getChildrenCount(barList) {
     var childrenCount = getChildrenCount(curr.children);
     return prev + curr._childrenCount + childrenCount;
   }, 0);
-} // MEMO: アプリ側へ渡すデータに変換する関数
-
-function convertBarList(barList, activeId, overId) {
-  var parents = barList[0]._parents.map(function (parent, index) {
-    return {
-      id: parent.record.id,
-      depth: index
-    };
-  });
-
-  return {
-    activeId: activeId,
-    overId: overId,
-    parents: parents
-  };
 }
 function convertItem(barList) {
   var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
@@ -6811,7 +6797,8 @@ var ExpandIcon = observer(function (_ref) {
       onExpand = _ref.onExpand,
       store = _ref.store,
       expandIcon = _ref.expandIcon,
-      prefixCls = _ref.prefixCls;
+      prefixCls = _ref.prefixCls,
+      tableIndent = _ref.tableIndent;
 
   var handleClick = function handleClick(event) {
     event.stopPropagation();
@@ -6819,13 +6806,22 @@ var ExpandIcon = observer(function (_ref) {
     store.setRowCollapse(bar.task, !bar._collapsed);
   };
 
-  return /*#__PURE__*/React.createElement("div", null, expandIcon ? expandIcon({
-    level: bar._depth,
+  var barDepth = isNaN(bar._depth) ? 0 : bar._depth;
+  return /*#__PURE__*/React.createElement("div", {
+    style: {
+      position: 'absolute',
+      left: tableIndent * barDepth + 15,
+      zIndex: 9,
+      transform: 'translateX(-52%)',
+      padding: 1
+    }
+  }, expandIcon ? expandIcon({
+    level: barDepth,
     collapsed: bar._collapsed,
     onClick: handleClick
   }) : /*#__PURE__*/React.createElement(RowToggler, {
     prefixCls: prefixCls,
-    level: bar._depth,
+    level: barDepth,
     collapsed: bar._collapsed,
     onClick: handleClick
   }));
@@ -6868,16 +6864,17 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
       onRow === null || onRow === void 0 ? void 0 : onRow.onClick(bar.record);
     }
   }, columns.map(function (column, index) {
+    var barDepth = isNaN(bar._depth) ? 0 : bar._depth;
     return /*#__PURE__*/React.createElement("div", {
       key: column.name,
-      className: "".concat(prefixClsTableBody, "-cell"),
+      className: classNames("".concat(prefixClsTableBody, "-cell"), column.name === 'title' && bar._childrenCount === 0 && barDepth !== 0 && 'last-child'),
       style: _objectSpread2({
         width: columnsWidth[index],
         height: rowHeight,
         minWidth: column.minWidth,
         maxWidth: column.maxWidth,
         textAlign: column.align ? column.align : 'left',
-        paddingLeft: index === 0 && tableIndent * (bar._depth + 1) + 10
+        paddingLeft: column.name === 'title' ? tableIndent * (barDepth + 1) + 10 : 12
       }, column.style)
     }, column.name === 'dragButton' && column.render && column.render(bar.record) != null && /*#__PURE__*/React.createElement("button", _objectSpread2(_objectSpread2({
       type: 'button'
@@ -6887,7 +6884,8 @@ var DraggableBlockItem = function DraggableBlockItem(_ref2) {
         pointerEvents: 'auto',
         touchAction: 'none'
       }
-    }), column.render(bar.record)), index === 0 && bar._childrenCount > 0 && /*#__PURE__*/React.createElement(ExpandIcon, {
+    }), column.render(bar.record)), column.name === 'title' && bar._childrenCount > 0 && /*#__PURE__*/React.createElement(ExpandIcon, {
+      tableIndent: tableIndent,
       bar: bar,
       onExpand: onExpand,
       store: store,
@@ -6945,6 +6943,29 @@ var updateBarListRecursively = function updateBarListRecursively(originalList, n
   return updatedList;
 };
 
+var updateFractionalIndicesRecursively = function updateFractionalIndicesRecursively(barList, orderedItems) {
+  return barList.map(function (bar) {
+    // Find if there's a corresponding ordered item for this bar
+    var orderedItem = orderedItems.find(function (item) {
+      return item.workItemId === bar.record.id;
+    }); // Update the fractional index if there is a match
+
+    var updatedBar = orderedItem ? _objectSpread2(_objectSpread2({}, bar), {}, {
+      record: _objectSpread2(_objectSpread2({}, bar.record), {}, {
+        fractionalIndex: orderedItem.fractionalIndex
+      })
+    }) : bar; // Recursively update children
+
+    if (updatedBar.children && updatedBar.children.length > 0) {
+      return _objectSpread2(_objectSpread2({}, updatedBar), {}, {
+        children: updateFractionalIndicesRecursively(updatedBar.children, orderedItems)
+      });
+    }
+
+    return updatedBar;
+  });
+};
+
 var ObserverTableRows = function ObserverTableRows(_ref) {
   var barList = _ref.barList;
 
@@ -6979,6 +7000,10 @@ var ObserverTableRows = function ObserverTableRows(_ref) {
     var newIndex = barList.findIndex(function (item) {
       return item.record.id === over.id;
     });
+    var activeItem = barList[oldIndex];
+    var overItem = barList[newIndex]; // 自分 or 被せたのアイテムの fractionalIndex が undefined の場合、true
+
+    var hasWithoutFractionalIndex = activeItem.record.fractionalIndex === undefined || overItem.record.fractionalIndex === undefined;
 
     if (active.id !== over.id) {
       var newOrder = arrayMove(barList, oldIndex, newIndex);
@@ -6986,22 +7011,95 @@ var ObserverTableRows = function ObserverTableRows(_ref) {
         return order.record.id;
       });
       var updatedBarList = updateBarListRecursively(originalBarList, newOrder);
-      store.updateBarListOrder(updatedBarList);
-      orderedBarList === null || orderedBarList === void 0 ? void 0 : orderedBarList(convertBarList(newOrder, active.id, over.id));
+      var prevFractionalIndex = newIndex === 0 ? null : newOrder[newIndex - 1].record.fractionalIndex;
+      var nextFractionalIndex = newIndex === barList.length - 1 ? null : newOrder[newIndex + 1].record.fractionalIndex;
+      var newOrderIds = newOrder.map(function (order) {
+        return order.record.id;
+      });
+
+      var orderedItems = function orderedItems() {
+        if (!hasWithoutFractionalIndex) {
+          try {
+            var newFractionalIndex = generateKeyBetween(prevFractionalIndex, nextFractionalIndex);
+            var _orderedItems = [{
+              workItemId: active.id,
+              fractionalIndex: newFractionalIndex
+            }];
+            return _orderedItems;
+          } catch (error) {
+            var prev = null;
+            var _orderedItems2 = [];
+
+            var _iterator = _createForOfIteratorHelper(newOrderIds),
+                _step;
+
+            try {
+              for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                var id = _step.value;
+                var fractionalIndex = generateKeyBetween(prev, null);
+
+                _orderedItems2.push({
+                  workItemId: id,
+                  fractionalIndex: fractionalIndex
+                });
+
+                prev = fractionalIndex;
+              }
+            } catch (err) {
+              _iterator.e(err);
+            } finally {
+              _iterator.f();
+            }
+
+            return _orderedItems2;
+          }
+        }
+
+        if (hasWithoutFractionalIndex) {
+          var _prev = null;
+          var _orderedItems3 = [];
+
+          var _iterator2 = _createForOfIteratorHelper(newOrderIds),
+              _step2;
+
+          try {
+            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+              var _id = _step2.value;
+
+              var _fractionalIndex = generateKeyBetween(_prev, null);
+
+              _orderedItems3.push({
+                workItemId: _id,
+                fractionalIndex: _fractionalIndex
+              });
+
+              _prev = _fractionalIndex;
+            }
+          } catch (err) {
+            _iterator2.e(err);
+          } finally {
+            _iterator2.f();
+          }
+
+          return _orderedItems3;
+        }
+
+        return [];
+      };
+
+      var orderedBarListWithFractionalIndex = orderedItems();
+      var finalUpdatedBarList = updatedBarList; // Apply the fractional indices to the updated bar list if available
+
+      if (orderedBarListWithFractionalIndex && orderedBarListWithFractionalIndex.length > 0) {
+        finalUpdatedBarList = updateFractionalIndicesRecursively(updatedBarList, orderedBarListWithFractionalIndex);
+      }
+
+      store.updateBarListOrder(finalUpdatedBarList);
+      orderedBarList === null || orderedBarList === void 0 ? void 0 : orderedBarList({
+        orderedItems: orderedBarListWithFractionalIndex
+      });
     }
   }, [barList, originalBarList, store, orderedBarList]);
-
-  if (barList.length === 0) {
-    return /*#__PURE__*/React.createElement("div", {
-      style: {
-        textAlign: 'center',
-        color: ' rgba(0,0,0,0.65)',
-        marginTop: 30,
-        fontSize: 14
-      }
-    }, "\u8A72\u5F53\u3059\u308B\u30C7\u30FC\u30BF\u304C\u3042\u308A\u307E\u305B\u3093");
-  }
-
   return /*#__PURE__*/React.createElement(DndContext, {
     sensors: sensors,
     collisionDetection: closestCenter,

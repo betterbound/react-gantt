@@ -10,12 +10,10 @@ interface ConvertBar {
   parents?: Gantt.Item[] | undefined
 }
 
-export interface ConvertedBarList {
-  activeId: string
-  overId: string
-  parents: {
-    id: string
-    depth: number
+export interface OrderedBarList {
+  orderedItems: {
+    workItemId: string
+    fractionalIndex: string
   }[]
 }
 
@@ -27,15 +25,6 @@ export function getChildrenCount(barList: Gantt.Bar[]): number {
     const childrenCount = getChildrenCount(curr.children)
     return prev + curr._childrenCount + childrenCount
   }, 0)
-}
-
-// MEMO: アプリ側へ渡すデータに変換する関数
-export function convertBarList(barList: Gantt.Bar[], activeId: string, overId: string): ConvertedBarList {
-  const parents = barList[0]._parents.map((parent, index) => {
-    return { id: parent.record.id, depth: index }
-  })
-
-  return { activeId, overId, parents }
 }
 
 export function convertItem(barList: Gantt.Bar[], depth = 0, parents?: Gantt.Bar[] | undefined): Gantt.Item[] {
@@ -115,13 +104,13 @@ export function convertBar({ data, pxUnitAmp, rowHeight, disabled, depth = 0, pa
       children: !item.children
         ? []
         : convertBar({
-          data: item.children,
-          pxUnitAmp,
-          rowHeight,
-          disabled,
-          depth: item._depth + 1,
-          parents: [...(parents || []), item],
-        }),
+            data: item.children,
+            pxUnitAmp,
+            rowHeight,
+            disabled,
+            depth: item._depth + 1,
+            parents: [...(parents || []), item],
+          }),
       _group: item.group,
       _collapsed: item.collapsed, // 訳: 折りたたみかどうか
       _depth: depth as number, // 訳: 子ノードの深さを示す

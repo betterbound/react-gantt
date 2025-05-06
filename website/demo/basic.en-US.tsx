@@ -7,6 +7,7 @@ interface Data {
   name: string
   startDate: string
   endDate: string
+  fractionalIndex?: string
   className: string
   barItems?: {
     id: string
@@ -29,10 +30,11 @@ function createData(len: number) {
       endDate: dayjs()
         .add(i + 2, 'day')
         .format('YYYY-MM-DD'),
+      fractionalIndex: `a${i}`,
       className: 'blue',
       children: [
         {
-          id: 234 + i,
+          id: 234,
           name: `ACTION_1_${i}`,
           startDate: dayjs()
             .subtract(i + 2, 'day')
@@ -40,17 +42,19 @@ function createData(len: number) {
           endDate: dayjs()
             .add(i + 2, 'day')
             .format('YYYY-MM-DD'),
+          fractionalIndex: 'a0',
           className: 'gray',
           children: [
             {
-              id: 3454 + i,
-              name: `TASK_1_${i}`,
+              id: 100,
+              name: '100',
               startDate: dayjs()
                 .subtract(i + 2, 'day')
                 .format('YYYY-MM-DD'),
               endDate: dayjs()
                 .add(i + 2, 'day')
                 .format('YYYY-MM-DD'),
+              fractionalIndex: 'a0',
               className: 'white',
               barItems: [
                 {
@@ -62,14 +66,15 @@ function createData(len: number) {
               ],
             },
             {
-              id: 3861 + i,
-              name: `TASK_2_${i}`,
+              id: 101,
+              name: '101',
               startDate: dayjs()
                 .subtract(i + 3, 'day')
                 .format('YYYY-MM-DD'),
               endDate: dayjs()
                 .add(i + 3, 'day')
                 .format('YYYY-MM-DD'),
+              // fractionalIndex: 'a1',
               className: 'white',
               barItems: [
                 {
@@ -95,8 +100,127 @@ function createData(len: number) {
               ],
             },
             {
-              id: 3568 + i,
-              name: `TASK_3_${i}`,
+              id: 102,
+              name: '102',
+              startDate: dayjs()
+                .subtract(i + 6, 'day')
+                .format('YYYY-MM-DD'),
+              endDate: dayjs()
+                .add(i + 6, 'day')
+                .format('YYYY-MM-DD'),
+              fractionalIndex: 'a2',
+              className: 'white',
+              barItems: [
+                {
+                  id: `${i}-1`,
+                  icon: <span>A</span>,
+                  startDate: dayjs().subtract(i, 'week').format('YYYY-MM-DD'),
+                  endDate: dayjs().add(i, 'week').format('YYYY-MM-DD'),
+                },
+                {
+                  id: `${i}-2`,
+                  icon: <span>B</span>,
+                  startDate: dayjs()
+                    .subtract(i - 2, 'week')
+                    .format('YYYY-MM-DD'),
+                  endDate: dayjs()
+                    .add(i + 1, 'week')
+                    .format('YYYY-MM-DD'),
+                },
+                {
+                  id: `${i}-3`,
+                  icon: <span>C</span>,
+                  startDate: dayjs()
+                    .subtract(i - 3, 'week')
+                    .format('YYYY-MM-DD'),
+                  endDate: dayjs()
+                    .add(i + 3, 'week')
+                    .format('YYYY-MM-DD'),
+                },
+              ],
+            },
+            {
+              id: 103,
+              name: '103',
+              startDate: dayjs()
+                .subtract(i + 6, 'day')
+                .format('YYYY-MM-DD'),
+              endDate: dayjs()
+                .add(i + 6, 'day')
+                .format('YYYY-MM-DD'),
+              className: 'white',
+              fractionalIndex: 'a0',
+              barItems: [
+                {
+                  id: `${i}-1`,
+                  icon: <span>A</span>,
+                  startDate: dayjs().subtract(i, 'week').format('YYYY-MM-DD'),
+                  endDate: dayjs().add(i, 'week').format('YYYY-MM-DD'),
+                },
+                {
+                  id: `${i}-2`,
+                  icon: <span>B</span>,
+                  startDate: dayjs()
+                    .subtract(i - 2, 'week')
+                    .format('YYYY-MM-DD'),
+                  endDate: dayjs()
+                    .add(i + 1, 'week')
+                    .format('YYYY-MM-DD'),
+                },
+                {
+                  id: `${i}-3`,
+                  icon: <span>C</span>,
+                  startDate: dayjs()
+                    .subtract(i - 3, 'week')
+                    .format('YYYY-MM-DD'),
+                  endDate: dayjs()
+                    .add(i + 3, 'week')
+                    .format('YYYY-MM-DD'),
+                },
+              ],
+            },
+            {
+              id: 104,
+              name: '104',
+              startDate: dayjs()
+                .subtract(i + 6, 'day')
+                .format('YYYY-MM-DD'),
+              endDate: dayjs()
+                .add(i + 6, 'day')
+                .format('YYYY-MM-DD'),
+              className: 'white',
+              barItems: [
+                {
+                  id: `${i}-1`,
+                  icon: <span>A</span>,
+                  startDate: dayjs().subtract(i, 'week').format('YYYY-MM-DD'),
+                  endDate: dayjs().add(i, 'week').format('YYYY-MM-DD'),
+                },
+                {
+                  id: `${i}-2`,
+                  icon: <span>B</span>,
+                  startDate: dayjs()
+                    .subtract(i - 2, 'week')
+                    .format('YYYY-MM-DD'),
+                  endDate: dayjs()
+                    .add(i + 1, 'week')
+                    .format('YYYY-MM-DD'),
+                },
+                {
+                  id: `${i}-3`,
+                  icon: <span>C</span>,
+                  startDate: dayjs()
+                    .subtract(i - 3, 'week')
+                    .format('YYYY-MM-DD'),
+                  endDate: dayjs()
+                    .add(i + 3, 'week')
+                    .format('YYYY-MM-DD'),
+                },
+              ],
+            },
+            {
+              id: 105,
+              name: '105',
               startDate: dayjs()
                 .subtract(i + 6, 'day')
                 .format('YYYY-MM-DD'),
@@ -136,7 +260,7 @@ function createData(len: number) {
           ],
         },
         {
-          id: 286 + i,
+          id: 286,
           name: `ACTION_2_${i}`,
           startDate: dayjs()
             .subtract(i + 4, 'day')
@@ -144,11 +268,85 @@ function createData(len: number) {
           endDate: dayjs()
             .add(i + 4, 'day')
             .format('YYYY-MM-DD'),
+          fractionalIndex: 'a1',
           className: 'gray',
           children: [
             {
-              id: i,
-              name: `TASK_2_${i}`,
+              id: 200,
+              name: `TASK_200_${i}`,
+              // name: ``,
+              startDate: dayjs()
+                .subtract(i + 2, 'day')
+                .format('YYYY-MM-DD'),
+              endDate: dayjs()
+                .add(i + 2, 'day')
+                .format('YYYY-MM-DD'),
+              className: 'white',
+              barItems: [
+                {
+                  id: `${i}-3`,
+                  icon: <span>C</span>,
+                  startDate: dayjs()
+                    .subtract(i - 3, 'week')
+                    .format('YYYY-MM-DD'),
+                  endDate: dayjs()
+                    .add(i + 3, 'week')
+                    .format('YYYY-MM-DD'),
+                },
+              ],
+            },
+            {
+              id: 201,
+              name: `TASK_201_${i}`,
+              // name: ``,
+              startDate: dayjs()
+                .subtract(i + 2, 'day')
+                .format('YYYY-MM-DD'),
+              endDate: dayjs()
+                .add(i + 2, 'day')
+                .format('YYYY-MM-DD'),
+              className: 'white',
+              barItems: [
+                {
+                  id: `${i}-3`,
+                  icon: <span>C</span>,
+                  startDate: dayjs()
+                    .subtract(i - 3, 'week')
+                    .format('YYYY-MM-DD'),
+                  endDate: dayjs()
+                    .add(i + 3, 'week')
+                    .format('YYYY-MM-DD'),
+                },
+              ],
+            },
+            {
+              id: 202,
+              name: `TASK_202_${i}`,
+              // name: ``,
+              startDate: dayjs()
+                .subtract(i + 2, 'day')
+                .format('YYYY-MM-DD'),
+              endDate: dayjs()
+                .add(i + 2, 'day')
+                .format('YYYY-MM-DD'),
+              className: 'white',
+              fractionalIndex: 'a0',
+              barItems: [
+                {
+                  id: `${i}-3`,
+                  icon: <span>C</span>,
+                  startDate: dayjs()
+                    .subtract(i - 3, 'week')
+                    .format('YYYY-MM-DD'),
+                  endDate: dayjs()
+                    .add(i + 3, 'week')
+                    .format('YYYY-MM-DD'),
+                },
+              ],
+            },
+            {
+              id: 203,
+              name: `TASK_203_${i}`,
               // name: ``,
               startDate: dayjs()
                 .subtract(i + 2, 'day')
@@ -173,8 +371,34 @@ function createData(len: number) {
           ],
         },
         {
-          id: 298 + i,
+          id: 298,
           name: `ACTION_3_${i}`,
+          startDate: dayjs()
+            .subtract(i + 5, 'day')
+            .format('YYYY-MM-DD'),
+          endDate: dayjs()
+            .add(i + 5, 'day')
+            .format('YYYY-MM-DD'),
+          fractionalIndex: 'a2',
+          className: 'gray',
+          children: [
+            {
+              id: 3549 + i,
+              name: `TASK_3_${i}`,
+              startDate: dayjs()
+                .subtract(i + 5, 'day')
+                .format('YYYY-MM-DD'),
+              endDate: dayjs()
+                .add(i + 2, 'day')
+                .format('YYYY-MM-DD'),
+              fractionalIndex: 'a0',
+              className: 'white',
+            },
+          ],
+        },
+        {
+          id: 299,
+          name: `ACTION_4_${i}`,
           startDate: dayjs()
             .subtract(i + 5, 'day')
             .format('YYYY-MM-DD'),
@@ -192,6 +416,57 @@ function createData(len: number) {
               endDate: dayjs()
                 .add(i + 2, 'day')
                 .format('YYYY-MM-DD'),
+              fractionalIndex: 'a0',
+              className: 'white',
+            },
+          ],
+        },
+        {
+          id: 300,
+          name: `ACTION_5_${i}`,
+          startDate: dayjs()
+            .subtract(i + 5, 'day')
+            .format('YYYY-MM-DD'),
+          endDate: dayjs()
+            .add(i + 5, 'day')
+            .format('YYYY-MM-DD'),
+          className: 'gray',
+          children: [
+            {
+              id: 3549 + i,
+              name: `TASK_3_${i}`,
+              startDate: dayjs()
+                .subtract(i + 5, 'day')
+                .format('YYYY-MM-DD'),
+              endDate: dayjs()
+                .add(i + 2, 'day')
+                .format('YYYY-MM-DD'),
+              fractionalIndex: 'a0',
+              className: 'white',
+            },
+          ],
+        },
+        {
+          id: 301,
+          name: `ACTION_6_${i}`,
+          startDate: dayjs()
+            .subtract(i + 5, 'day')
+            .format('YYYY-MM-DD'),
+          endDate: dayjs()
+            .add(i + 5, 'day')
+            .format('YYYY-MM-DD'),
+          className: 'gray',
+          children: [
+            {
+              id: 3549 + i,
+              name: `TASK_3_${i}`,
+              startDate: dayjs()
+                .subtract(i + 5, 'day')
+                .format('YYYY-MM-DD'),
+              endDate: dayjs()
+                .add(i + 2, 'day')
+                .format('YYYY-MM-DD'),
+              fractionalIndex: 'a0',
               className: 'white',
             },
           ],
@@ -203,17 +478,18 @@ function createData(len: number) {
 }
 
 const App = () => {
-  const [data, setData] = useState(createData(20))
+  const [data, setData] = useState(createData(9))
   const handleClick = e => {
     console.log(e, e.currentTarget.value, e.currentTarget.innerText)
   }
-
+  console.log(data)
   return (
     <>
-      <div style={{ width: '100%', height: 500 }}>
+      <div style={{ width: '100%', height: 800 }}>
         <RcGantt<Data>
           data={data}
           rowHeight={80}
+          tableIndent={20}
           columns={[
             {
               name: 'dragButton',
@@ -222,8 +498,19 @@ const App = () => {
               style: {
                 padding: 0,
               },
-              render: (record) => {
+              render: record => {
                 return <>icon</>
+              },
+            },
+            {
+              name: 'title',
+              label: 'OutputGanttToggleButtons',
+              render: record => {
+                return (
+                  <>
+                    {record.name}_{record.fractionalIndex}
+                  </>
+                )
               },
             },
             {
@@ -242,16 +529,7 @@ const App = () => {
                 padding: 0,
               },
             },
-            {
-              name: 'title',
-              label: 'OutputGanttToggleButtons',
-              render: record => {
-                return <p>{record.name}</p>
-              },
-              style: {
-                padding: 0,
-              },
-            },
+
             {
               name: 'bookmark',
               label: 'B',

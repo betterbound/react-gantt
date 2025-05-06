@@ -26,7 +26,7 @@ export namespace Gantt {
     startDate: Dayjs
     endDate: Dayjs
   }
-  export type Sight = 'day' | 'week' | 'week_in_month' |'month' | 'quarter' | 'halfYear'
+  export type Sight = 'day' | 'week' | 'week_in_month' | 'month' | 'quarter' | 'halfYear'
   export type MoveType = 'left' | 'right' | 'move' | 'create'
 
   export enum ESightValues {
