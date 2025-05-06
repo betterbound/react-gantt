@@ -7019,40 +7019,69 @@ var ObserverTableRows = function ObserverTableRows(_ref) {
 
       var orderedItems = function orderedItems() {
         if (!hasWithoutFractionalIndex) {
-          var newFractionalIndex = generateKeyBetween(prevFractionalIndex, nextFractionalIndex);
-          var _orderedItems = [{
-            workItemId: active.id,
-            fractionalIndex: newFractionalIndex
-          }];
-          return _orderedItems;
+          try {
+            var newFractionalIndex = generateKeyBetween(prevFractionalIndex, nextFractionalIndex);
+            var _orderedItems = [{
+              workItemId: active.id,
+              fractionalIndex: newFractionalIndex
+            }];
+            return _orderedItems;
+          } catch (error) {
+            var prev = null;
+            var _orderedItems2 = [];
+
+            var _iterator = _createForOfIteratorHelper(newOrderIds),
+                _step;
+
+            try {
+              for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                var id = _step.value;
+                var fractionalIndex = generateKeyBetween(prev, null);
+
+                _orderedItems2.push({
+                  workItemId: id,
+                  fractionalIndex: fractionalIndex
+                });
+
+                prev = fractionalIndex;
+              }
+            } catch (err) {
+              _iterator.e(err);
+            } finally {
+              _iterator.f();
+            }
+
+            return _orderedItems2;
+          }
         }
 
         if (hasWithoutFractionalIndex) {
-          var prev = null;
-          var _orderedItems2 = [];
+          var _prev = null;
+          var _orderedItems3 = [];
 
-          var _iterator = _createForOfIteratorHelper(newOrderIds),
-              _step;
+          var _iterator2 = _createForOfIteratorHelper(newOrderIds),
+              _step2;
 
           try {
-            for (_iterator.s(); !(_step = _iterator.n()).done;) {
-              var id = _step.value;
-              var fractionalIndex = generateKeyBetween(prev, null);
+            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+              var _id = _step2.value;
 
-              _orderedItems2.push({
-                workItemId: id,
-                fractionalIndex: fractionalIndex
+              var _fractionalIndex = generateKeyBetween(_prev, null);
+
+              _orderedItems3.push({
+                workItemId: _id,
+                fractionalIndex: _fractionalIndex
               });
 
-              prev = fractionalIndex;
+              _prev = _fractionalIndex;
             }
           } catch (err) {
-            _iterator.e(err);
+            _iterator2.e(err);
           } finally {
-            _iterator.f();
+            _iterator2.f();
           }
 
-          return _orderedItems2;
+          return _orderedItems3;
         }
 
         return [];
