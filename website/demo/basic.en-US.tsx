@@ -47,7 +47,7 @@ function createData(len: number) {
           children: [
             {
               id: 100,
-              name: '100 a0',
+              name: '100',
               startDate: dayjs()
                 .subtract(i + 2, 'day')
                 .format('YYYY-MM-DD'),
@@ -67,14 +67,14 @@ function createData(len: number) {
             },
             {
               id: 101,
-              name: '101 a1',
+              name: '101',
               startDate: dayjs()
                 .subtract(i + 3, 'day')
                 .format('YYYY-MM-DD'),
               endDate: dayjs()
                 .add(i + 3, 'day')
                 .format('YYYY-MM-DD'),
-              fractionalIndex: 'a1',
+              // fractionalIndex: 'a1',
               className: 'white',
               barItems: [
                 {
@@ -101,7 +101,7 @@ function createData(len: number) {
             },
             {
               id: 102,
-              name: '102a2',
+              name: '102',
               startDate: dayjs()
                 .subtract(i + 6, 'day')
                 .format('YYYY-MM-DD'),
@@ -141,7 +141,7 @@ function createData(len: number) {
             },
             {
               id: 103,
-              name: `TASK_103_${i}`,
+              name: '103',
               startDate: dayjs()
                 .subtract(i + 6, 'day')
                 .format('YYYY-MM-DD'),
@@ -149,6 +149,7 @@ function createData(len: number) {
                 .add(i + 6, 'day')
                 .format('YYYY-MM-DD'),
               className: 'white',
+              fractionalIndex: 'a0',
               barItems: [
                 {
                   id: `${i}-1`,
@@ -180,7 +181,7 @@ function createData(len: number) {
             },
             {
               id: 104,
-              name: `TASK_104_${i}`,
+              name: '104',
               startDate: dayjs()
                 .subtract(i + 6, 'day')
                 .format('YYYY-MM-DD'),
@@ -219,7 +220,7 @@ function createData(len: number) {
             },
             {
               id: 105,
-              name: `TASK_105_${i}`,
+              name: '105',
               startDate: dayjs()
                 .subtract(i + 6, 'day')
                 .format('YYYY-MM-DD'),
@@ -329,6 +330,7 @@ function createData(len: number) {
                 .add(i + 2, 'day')
                 .format('YYYY-MM-DD'),
               className: 'white',
+              fractionalIndex: 'a0',
               barItems: [
                 {
                   id: `${i}-3`,

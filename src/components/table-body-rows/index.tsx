@@ -123,14 +123,30 @@ const ObserverTableRows = ({ barList }: Props) => {
 
         const orderedItems = () => {
           if (!hasWithoutFractionalIndex) {
-            const newFractionalIndex = generateKeyBetween(prevFractionalIndex, nextFractionalIndex)
-            const orderedItems = [
-              {
-                workItemId: active.id,
-                fractionalIndex: newFractionalIndex,
-              },
-            ]
-            return orderedItems
+            try {
+              const newFractionalIndex = generateKeyBetween(prevFractionalIndex, nextFractionalIndex)
+              const orderedItems = [
+                {
+                  workItemId: active.id,
+                  fractionalIndex: newFractionalIndex,
+                },
+              ]
+              return orderedItems
+            } catch (error) {
+              let prev = null
+              const orderedItems: { workItemId: string; fractionalIndex: string }[] = []
+
+              for (const id of newOrderIds) {
+                const fractionalIndex = generateKeyBetween(prev, null)
+                orderedItems.push({
+                  workItemId: id,
+                  fractionalIndex: fractionalIndex,
+                })
+
+                prev = fractionalIndex
+              }
+              return orderedItems
+            }
           }
 
           if (hasWithoutFractionalIndex) {
