@@ -7,6 +7,7 @@ import { createPortal } from 'react-dom';
 import { observable, action, computed, runInAction, toJS } from 'mobx';
 import { useSensors, useSensor, PointerSensor, KeyboardSensor, DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
 import { useSortable, sortableKeyboardCoordinates, arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { generateKeyBetween } from 'fractional-indexing';
 
 function _defineProperty(obj, key, value) {
   if (key in obj) {
@@ -6942,6 +6943,29 @@ var updateBarListRecursively = function updateBarListRecursively(originalList, n
   return updatedList;
 };
 
+var updateFractionalIndicesRecursively = function updateFractionalIndicesRecursively(barList, orderedItems) {
+  return barList.map(function (bar) {
+    // Find if there's a corresponding ordered item for this bar
+    var orderedItem = orderedItems.find(function (item) {
+      return item.workItemId === bar.record.id;
+    }); // Update the fractional index if there is a match
+
+    var updatedBar = orderedItem ? _objectSpread2(_objectSpread2({}, bar), {}, {
+      record: _objectSpread2(_objectSpread2({}, bar.record), {}, {
+        fractionalIndex: orderedItem.fractionalIndex
+      })
+    }) : bar; // Recursively update children
+
+    if (updatedBar.children && updatedBar.children.length > 0) {
+      return _objectSpread2(_objectSpread2({}, updatedBar), {}, {
+        children: updateFractionalIndicesRecursively(updatedBar.children, orderedItems)
+      });
+    }
+
+    return updatedBar;
+  });
+};
+
 var ObserverTableRows = function ObserverTableRows(_ref) {
   var barList = _ref.barList;
 
@@ -6992,17 +7016,62 @@ var ObserverTableRows = function ObserverTableRows(_ref) {
       var newOrderIds = newOrder.map(function (order) {
         return order.record.id;
       });
-      store.updateBarListOrder(updatedBarList);
-      orderedBarList === null || orderedBarList === void 0 ? void 0 : orderedBarList(_objectSpread2({
-        id: active.id
-      }, hasWithoutFractionalIndex ? {
-        orderedItemIds: newOrderIds
-      } : {
-        fractionalIndex: {
-          prev: prevFractionalIndex,
-          next: nextFractionalIndex
+
+      var orderedItems = function orderedItems() {
+        if (!hasWithoutFractionalIndex) {
+          var newFractionalIndex = generateKeyBetween(prevFractionalIndex, nextFractionalIndex);
+          var _orderedItems = [{
+            workItemId: active.id,
+            fractionalIndex: newFractionalIndex
+          }];
+          return _orderedItems;
         }
-      }));
+
+        if (hasWithoutFractionalIndex) {
+          var prev = null;
+          var _orderedItems2 = [];
+
+          var _iterator = _createForOfIteratorHelper(newOrderIds),
+              _step;
+
+          try {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              var id = _step.value;
+              var fractionalIndex = generateKeyBetween(prev, null);
+
+              _orderedItems2.push({
+                workItemId: id,
+                fractionalIndex: fractionalIndex
+              });
+
+              prev = fractionalIndex;
+            }
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
+          }
+
+          return _orderedItems2;
+        }
+
+        return [];
+      };
+
+      var orderedBarListWithFractionalIndex = orderedItems();
+      var finalUpdatedBarList = updatedBarList; // Apply the fractional indices to the updated bar list if available
+
+      if (orderedBarListWithFractionalIndex && orderedBarListWithFractionalIndex.length > 0) {
+        finalUpdatedBarList = updateFractionalIndicesRecursively(updatedBarList, orderedBarListWithFractionalIndex);
+      }
+
+      store.updateBarListOrder(finalUpdatedBarList);
+      console.log({
+        finalUpdatedBarList: finalUpdatedBarList
+      });
+      orderedBarList === null || orderedBarList === void 0 ? void 0 : orderedBarList({
+        orderedItems: orderedBarListWithFractionalIndex
+      });
     }
   }, [barList, originalBarList, store, orderedBarList]);
   return /*#__PURE__*/React.createElement(DndContext, {
